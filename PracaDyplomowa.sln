@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PracaDyplomowa", "PracaDyplomowa.csproj", "{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|iPhone = Debug|iPhone
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|Any CPU = Release|Any CPU
+		Release|iPhone = Release|iPhone
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Release|iPhone.Build.0 = Release|Any CPU
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{7C6CA642-0C14-4A20-8D8D-16C0418BD98B}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4A7DA005-DCFB-4D79-94E6-87EB02F48F10}
+	EndGlobalSection
+EndGlobal

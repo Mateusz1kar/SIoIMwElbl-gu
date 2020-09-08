@@ -1,0 +1,21 @@
+﻿@model PracaDyplomowa.ViewsModel.EventsListVM
+
+
+@foreach (var e in Model.eventList)
+{
+   
+    <div class="col-sm-6 col-lg-4">
+
+        <h3>@e.EventId</h3>
+        <h3>@e.Name</h3>
+        <h3>@e.ShortDescription</h3>
+        <h3>@e.Description</h3>
+        <h3>@e.Place</h3>
+        <h3>@e.DateStart</h3>
+        <h3>@e.DateEnd</h3>
+
+
+    </div>
+
+
+}

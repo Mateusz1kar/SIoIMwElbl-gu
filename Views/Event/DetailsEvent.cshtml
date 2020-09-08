@@ -1,0 +1,97 @@
+﻿@model PracaDyplomowa.ViewsModel.DetailsEventVM
+
+
+<div class="col-sm-6 col-lg-4">
+    @if (Model.eventDetail.Images!=null)
+    {
+        foreach (var item in Model.eventDetail.Images)
+        {
+            <img src="~/Images/EventImages/@item.ImageName" />
+        }
+    }
+    <h3>@Model.eventDetail.EventId</h3>
+    <h3>@Model.eventDetail.Name</h3>
+    <h3>@Model.eventDetail.ShortDescription</h3>
+    <h3>@Model.eventDetail.Description</h3>
+    <h3>@Model.eventDetail.Place</h3>
+    <h3>@Model.eventDetail.DateStart</h3>
+    <h3>@Model.eventDetail.DateEnd</h3>
+
+
+</div>
+<form enctype="multipart/form-data" id="sever" asp-action="AddEventImage" asp-controller="Image" method="post" class="form-horizontal " role="form">
+    
+    <div class="form-group d-none">
+        <input asp-for="@Model.id" value="@Model.eventDetail.EventId" />
+    </div>
+    <div class="form-group">
+        <label class="custom-control-label col-2" asp-for="@Model.eventImage">Obraz promujący</label>
+        <div class="col-sm-10 custom-file">
+            <input lass="form-control custom-file-input" asp-for="@Model.eventImage" />
+            <span class="text-danger" asp-validation-for="@Model.eventImage"></span>
+        </div>
+    </div>
+    <div class="d-none">
+    </div>
+    <input type="submit" class="btn btn-primary" />
+</form>
+
+
+<form method="post" asp-action="UpdateEvent">
+    <div class="form-group">
+
+        <div class="col-sm-10">
+            <input asp-for="@Model.eventDetail.EventId" value="@Model.eventDetail.EventId" class="" form-control" />
+            <span asp-validation-for="@Model.eventDetail.EventId" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.eventDetail.Name" class="custom-control-label col-2">Nazwa</label>
+        <div class="col-sm-10">
+            <input asp-for="@Model.eventDetail.Name" class="form-control" />
+            <span asp-validation-for="@Model.eventDetail.Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.eventDetail.ShortDescription" class="custom-control-label col-2">Krótki opis</label>
+        <div class="col-sm-10">
+            <input asp-for="@Model.eventDetail.ShortDescription" class="form-control" />
+            <span asp-validation-for="@Model.eventDetail.ShortDescription" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.eventDetail.Description" class="custom-control-label col-2">Opis</label>
+        <div class="col-sm-10">
+            <input asp-for="@Model.eventDetail.Description" class="form-control" />
+            <span asp-validation-for="@Model.eventDetail.Description" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.eventDetail.Place" class="custom-control-label col-2">Miejsce</label>
+        <div class="col-sm-10">
+            <input asp-for="@Model.eventDetail.Place" class="form-control" />
+            <span asp-validation-for="@Model.eventDetail.Place" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.eventDetail.DateStart" class="custom-control-label col-2">Data początku</label>
+        <div class="col-sm-10">
+            <input asp-for="@Model.eventDetail.DateStart" class="form-control" type="date" />
+            <span asp-validation-for="@Model.eventDetail.DateStart" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.eventDetail.DateEnd" class="custom-control-label col-2">Data końca</label>
+        <div class="col-sm-10">
+            <input asp-for="@Model.eventDetail.DateEnd" class="form-control" type="date" />
+            <span asp-validation-for="@Model.eventDetail.DateEnd" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" />
+    </div>
+
+</form>
+
+

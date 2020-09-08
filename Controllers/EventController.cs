@@ -1,0 +1,89 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using PracaDyplomowa.Interface;
+using PracaDyplomowa.Models;
+using PracaDyplomowa.ViewsModel;
+
+// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace PracaDyplomowa.Controllers
+{
+    //[Route("[controller]")]
+  
+    public class EventController : Controller
+    {
+        private readonly IEventRepozytory _eventRepozytory ;
+        public EventController(IEventRepozytory eventRepozytory)
+        {
+            _eventRepozytory = eventRepozytory;
+        }
+        // GET: /<controller>/
+        [HttpGet]
+        public IActionResult AddEvent()
+        {
+            AddEventVM model = new AddEventVM();
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult AddEvent(AddEventVM model)
+        {
+            if (ModelState.IsValid & User.Identity.IsAuthenticated)
+            {
+                Event e = new Event
+                {
+                    Name = model.Name,
+                    ShortDescription = model.ShortDescription,
+                    Description = model.Description,
+                    Place = model.Place,
+                    DateStart = model.DateStart,
+                    DateEnd = model.DateEnd,
+                     UserName=User.Identity.Name,
+                      Publications = new List<Publication>()
+                };
+                _eventRepozytory.addEvent(e);
+
+
+                return RedirectToAction("ShowEvents");
+            }
+            return View(model);
+
+        }
+        public IActionResult ShowEvents(EventsListVM model)
+        {
+            model.eventList = _eventRepozytory.allEvent().ToList();
+            return View(model);
+        }
+        public IActionResult MyEvents()
+        {
+            EventsListVM myEventsList = new EventsListVM();
+            myEventsList.eventList = _eventRepozytory.allUserEvents(User.Identity.Name).ToList();
+            return View(myEventsList);
+        }
+        //[HttpGet("[action]/{id}")]
+        public IActionResult DetailsEvent(int id,string error="")
+        {
+            Event e = _eventRepozytory.findEvent(id);
+            var model = new DetailsEventVM() { eventDetail = e, error=error };
+            return View(model);
+        }
+        public IActionResult UpdateEvent(DetailsEventVM model)
+        {
+            //Event e = new Event();
+            //e.EventId = model.evemtDetail.EventId;
+            //e.Name = model.evemtDetail.Name;
+            //e.Place = model.evemtDetail.Place;
+            //e.ShortDescription = model.evemtDetail.ShortDescription;
+            //e.Description = model.evemtDetail.Description;
+            //e.DateStart = model.evemtDetail.DateStart;
+            //e.DateEnd = model.evemtDetail.DateEnd;
+            _eventRepozytory.update(model.eventDetail);
+
+           
+            return RedirectToAction("DetailsEvent", new {id= model.eventDetail.EventId});
+        }
+
+    }
+}
