@@ -11,12 +11,12 @@
         <h3>@e.Place</h3>
         <h3>@e.DateStart</h3>
         <h3>@e.DateEnd</h3>
-        <button><a id="nav-link text-dark" class="nav-link" href="@Url.Action("DetailsEvent","Event")\@e.EventId ">dodaj event</a></button>
-        <form asp-action="DetailsEvent" asp-controller="Event" method="post">
+        <button><a id="nav-link text-dark" class="nav-link" href="@Url.Action("DetailsEvent","Event")\@e.EventId ">Szczegóły</a></button>
+        <form asp-action="DetailsEvent" asp-controller="Event" method="post" >
             <div class="form-group d-none">
                 <input asp-for="id" value="@e.EventId" />
             </div>
-            <input type="submit" class="btn btn-primary" />
+            <input type="submit" class="btn btn-primary" value="Szczegóły" />
         </form>
 
         

@@ -33,7 +33,8 @@ namespace PracaDyplomowa.Repozytory
 
         public void delEvent(int id)
         {
-            throw new NotImplementedException();
+            _appDbContext.Events.Remove(findEvent(id));
+            _appDbContext.SaveChanges();
         }
 
         public Event findEvent(int Id)

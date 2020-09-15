@@ -56,5 +56,34 @@ namespace PracaDyplomowa.Controllers
             else error = "Nie podano obrazu promującego";
             return RedirectToAction("DetailsEvent","Event",new { id = id });
         }
+        public IActionResult DeleteEventImage(string DeleteFileName, int id)
+        {
+            string error = "";
+            if (DeleteFileName != null)
+            {
+                string deletePath = Path.Combine(hostingEnvironment.WebRootPath,"Images\\EventImages\\"+ DeleteFileName);
+                System.IO.File.Delete(deletePath);
+                _imageRepozytory.delteEventImate(DeleteFileName);
+
+            }
+            else
+            {
+                error = "Błędna nazwa obrazu promującego";
+            }
+            return RedirectToAction("DetailsEvent", "Event", new { id = id, error = error });
+        }
+        public IActionResult DeleteAllEventImage(List<string>images,int eventId) 
+        { 
+           
+                foreach (var item in images)
+                {
+                    string deletePath = Path.Combine(hostingEnvironment.WebRootPath, "Images\\EventImages\\" + item);
+                    System.IO.File.Delete(deletePath);
+                    _imageRepozytory.delteEventImate(item);
+                }
+           
+          
+            return RedirectToAction("DeleteEvent", "Event", new { id = eventId });
+        }
     }
 }
