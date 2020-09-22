@@ -105,6 +105,15 @@ namespace PracaDyplomowa.Controllers
             return View("Login");
         }
 
+        public IActionResult UpdateFirmAccount(AccoutVM accoutUpdate)
+        {
+            if (_signInManager.IsSignedIn(User))
+            {
+                _firmAccountRepozytory.updateFirmAccount(User.Identity.Name, accoutUpdate.FirmName, accoutUpdate.FirmDescriotion);
+
+            }
+            return RedirectToAction("AccountPanel");
+        }
     }
 }
 

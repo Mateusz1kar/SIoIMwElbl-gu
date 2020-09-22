@@ -104,5 +104,11 @@ namespace PracaDyplomowa.Controllers
             return RedirectToAction("MyEvents");
         }
 
+        public IActionResult SearchEvents(EventsListVM model)
+        {
+            model.eventList = _eventRepozytory.searchEvents(model.searchName, model.sortByDS == "true", model.searcDateStart, model.sortByDE == "true", model.searcDateEnd, model.typeSort == "Up").ToList();
+            return View("ShowEvents", model);
+        }
+
     }
 }
