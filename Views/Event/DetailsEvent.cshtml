@@ -7,6 +7,15 @@
         foreach (var item in Model.eventDetail.Images)
         {
             <img src="~/Images/EventImages/@item.ImageName" />
+            <form method="post" asp-action="DeleteEventImage" asp-controller="Image">
+                <div class="d-none form-group">
+                    <input asp-for="@Model.DeleteFileName" value="@item.ImageName" />
+                </div>
+                <div class="d-none form-group">
+                    <input asp-for="@Model.id" value="@item.EventId" />
+                </div>
+                <input type="submit" value="Usuń" />
+            </form>
         }
     }
     <h3>@Model.eventDetail.EventId</h3>
@@ -19,6 +28,14 @@
 
 
 </div>
+
+<form class="form-horizontal border" method="delete" asp-action="DeleteEvent">
+    <div class="form-group d-none">
+        <input asp-for="@Model.id" value="@Model.eventDetail.EventId"/>
+    </div>
+    <input type="submit" class="btn-danger" value="Usuń event" />
+</form> 
+
 <form enctype="multipart/form-data" id="sever" asp-action="AddEventImage" asp-controller="Image" method="post" class="form-horizontal " role="form">
     
     <div class="form-group d-none">

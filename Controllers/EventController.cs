@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -83,6 +84,30 @@ namespace PracaDyplomowa.Controllers
 
            
             return RedirectToAction("DetailsEvent", new {id= model.eventDetail.EventId});
+        }
+        public IActionResult DeleteEvent(int id)
+        {
+            var e = _eventRepozytory.findEvent(id);
+            if (e!= null)
+            {
+                if (e.Images!= null)
+                {
+                    var imageNameList = new List<string>();
+                    foreach (var item in (e.Images))
+                    {
+                        imageNameList.Add(item.ImageName);
+                    }
+                    return RedirectToAction("DeleteAllEventImage", "Image", new { images = imageNameList, eventId= id });
+                }
+                _eventRepozytory.delEvent(id);
+            }
+            return RedirectToAction("MyEvents");
+        }
+
+        public IActionResult SearchEvents(EventsListVM model)
+        {
+            model.eventList = _eventRepozytory.searchEvents(model.searchName, model.sortByDS == "true", model.searcDateStart, model.sortByDE == "true", model.searcDateEnd, model.typeSort == "Up").ToList();
+            return View("ShowEvents", model);
         }
 
     }

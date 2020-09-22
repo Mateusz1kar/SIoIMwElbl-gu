@@ -13,5 +13,6 @@ namespace PracaDyplomowa.ViewsModel
         public Event eventDetail { get; set; }
         public string error { get; set; }
         public IFormFile eventImage { get; set; }
+        public string DeleteFileName { get; set; }
     }
 }
