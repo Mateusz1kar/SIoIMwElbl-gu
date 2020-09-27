@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PracaDyplomowa.Models;
 
 namespace PracaDyplomowa.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200924111007_Add_IdPage_to_TokenModel")]
+    partial class Add_IdPage_to_TokenModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -313,9 +315,6 @@ namespace PracaDyplomowa.Migrations
 
                     b.Property<string>("FirmAccountUserName")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("NamePage")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PageId")
                         .HasColumnType("nvarchar(max)");

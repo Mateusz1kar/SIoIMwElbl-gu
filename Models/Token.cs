@@ -10,6 +10,8 @@ namespace PracaDyplomowa.Models
         public string UserName { get; set; }
         public FirmAccount FirmAccount { get; set; }
         public string TokenText { get; set; }
+        public string PageId { get; set; }
+        public string NamePage { get; set; }
         //public string PublicationNeme { get; set; }
     }
 }

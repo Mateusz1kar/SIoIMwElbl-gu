@@ -35,5 +35,14 @@ namespace PracaDyplomowa.Repozytory
         {
             return _appDbContext.Tokens.FirstOrDefault(t => t.TokenText == TokenText);
         }
+
+        public bool TokenExist(string TokenText)
+        {
+            if (_appDbContext.Tokens.Find(TokenText)!=null)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

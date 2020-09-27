@@ -14,7 +14,12 @@
         <h3>@e.DateStart</h3>
         <h3>@e.DateEnd</h3>
 
-
+        <form asp-action="DetailsEvent" asp-controller="Event" method="post">
+            <div class="form-group d-none">
+                <input asp-for="id" value="@e.EventId" />
+            </div>
+            <input type="submit" class="btn btn-primary" value="Szczegóły" />
+        </form>
     </div>
     
 
