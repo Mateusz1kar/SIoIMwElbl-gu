@@ -17,9 +17,11 @@ namespace PracaDyplomowa.Controllers
     public class EventController : Controller
     {
         private readonly IEventRepozytory _eventRepozytory ;
-        public EventController(IEventRepozytory eventRepozytory)
+        private readonly ITokenRepozytory _tokenRepozytory;
+        public EventController(IEventRepozytory eventRepozytory, ITokenRepozytory tokenRepozytory)
         {
             _eventRepozytory = eventRepozytory;
+            _tokenRepozytory = tokenRepozytory;
         }
         // GET: /<controller>/
         [HttpGet]
@@ -67,7 +69,7 @@ namespace PracaDyplomowa.Controllers
         public IActionResult DetailsEvent(int id,string error="")
         {
             Event e = _eventRepozytory.findEvent(id);
-            var model = new DetailsEventVM() { eventDetail = e, error=error };
+            var model = new DetailsEventVM() { eventDetail = e, error=error , Tokens=_tokenRepozytory.getAll()};
             return View(model);
         }
         public IActionResult UpdateEvent(DetailsEventVM model)
