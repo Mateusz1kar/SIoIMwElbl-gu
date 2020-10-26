@@ -40,15 +40,32 @@ namespace PracaDyplomowa.Controllers
             Facebook facebook = new Facebook(
                 model.PublicationTokenText,
                 model.PublicationPageId
-                //"EAAXc743WXTkBAGtC3WFZBLFxKgRRbrZAgvsarX7ZCN0ubCTIwaXZBeF0CbjF1VLLdxkXr0THi5ZBX3biK522GaMWneeZBOHTl5ESqCVwHW1SNNvl5JTuL7Gl0sclAhkPOyztukhVu8TdGE2lmLRqUmf9cvoZAZBiDVPxt0QE86PfhptJtHN61XzZC",
+               //"EAAXc743WXTkBAGtC3WFZBLFxKgRRbrZAgvsarX7ZCN0ubCTIwaXZBeF0CbjF1VLLdxkXr0THi5ZBX3biK522GaMWneeZBOHTl5ESqCVwHW1SNNvl5JTuL7Gl0sclAhkPOyztukhVu8TdGE2lmLRqUmf9cvoZAZBiDVPxt0QE86PfhptJtHN61XzZC",
                //"103888034769355"
                );
             var result = await facebook.PublishSimplePost(model.PublicationText);
-            if (result.Item1!=200)
+            if (result.Item1 != 200)
             {
                 error = "Wystąpił błąd publikacja nie została wykonana";
             }
-            return RedirectToAction("DetailsEvent","Event",new { id=model.id , error=error});
+            return RedirectToAction("DetailsEvent", "Event", new { id = model.id, error = error });
+
+        }
+        public async Task<IActionResult> PublicImageToFacebook(DetailsEventVM model)
+        {
+            var error = "";
+            Facebook facebook = new Facebook(
+                model.PublicationTokenText,
+                model.PublicationPageId
+               );
+            //string image = Path.Combine(hostingEnvironment.WebRootPath, "Images\\EventImages\\"+ model.eventImage.Name);
+            //string imgeUrl = "https://localhost:44378/" + "Images/kotek.jpg";
+            string img = "https://dziendobry.tvn.pl/media/cache/content_cover/imie-dla-kotki-jak-wybrac-oryginalne-imie-i-dobrze-dopasowac-je-do-kotki-jpg.jpg";
+            string img2 = "https://i.ytimg.com/vi/S4UCxJK27D8/hqdefault.jpg";
+            List<string> imgList = new List<string>() { img, img2 };
+           var result =  facebook.PublishToFacebook(model.PublicationText, img);
+           
+            return RedirectToAction("DetailsEvent", "Event", new { id = model.id, error = error });
 
         }
     }
