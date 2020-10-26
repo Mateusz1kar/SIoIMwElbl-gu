@@ -1,12 +1,193 @@
 ﻿@model PracaDyplomowa.ViewsModel.AccoutVM
-
-<div class=" col-12">
-    <div class="row">
-        <div class="col-12 text-center m-auto">
+<div class="row">
+    <div class="col-12 text-center m-auto " id="accountProfileName">
+        <h2>
             @Model.FirmName
-        </div>
-        <div class="col-12 col-lg-8  m-auto">
-            @Model.FirmDescriotion 
-        </div>
+        </h2>
     </div>
 </div>
+<div class="row">
+    <div class=" col-md-8">
+
+
+        <div class="row " id="accountProfileDescription">
+            <div class="col-12   m-auto">s
+                @Model.FirmDescriotion
+            </div>
+        </div>
+        <div class="row d-none" id="acountProfileUpdateForm">
+            <form asp-action="UpdateFirmAccount" method="post" class="col-12">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label asp-for="FirmName" class="col-sm-2 col-form-label">Nazwa firmy</label>
+                    <div class="col-sm-10">
+                        <input asp-for="FirmName" class="form-control" />
+                        <span asp-validation-summary="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="FirmDescriotion" class="col-sm-2 col-form-label">Opis firmy </label>
+                    <div class=" col-sm-10">
+                        <input asp-for="FirmDescriotion" class="form-control" value="@Model.FirmDescriotion" />
+                        <span asp-validation-for="FirmDescriotion" class="text-danger"></span>
+                    </div>
+                </div>
+                <input type="submit" value="Zatwierdź zaminy" />
+            </form>
+        </div>
+        <div class="row">
+            @if (Model.Tokens != null)
+            {
+                <h4 class="col-12  m-auto">Strony publikacji:</h4>
+                <ul class="col-12   m-auto">
+                    @foreach (var item in Model.Tokens)
+                    {
+                        <li class="col-12 col-lg-8  border-info m-auto">
+                            @item.NamePage
+                        </li>
+                    }
+                </ul>
+
+            }
+        </div>
+        @*<div class="row">
+            <form asp-action="UpdateFirmAccount" method="post" class="col-12">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label asp-for="FirmName" class="col-sm-2 col-form-label">Nazwa firmy</label>
+                    <div class="col-sm-10">
+                        <input asp-for="FirmName" class="form-control" />
+                        <span asp-validation-summary="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="FirmDescriotion" class="col-sm-2 col-form-label">Opis firmy </label>
+                    <div class=" col-sm-10">
+                        <input asp-for="FirmDescriotion" class="form-control" value="@Model.FirmDescriotion" />
+                        <span asp-validation-for="FirmDescriotion" class="text-danger"></span>
+                    </div>
+                </div>
+                <input type="submit" value="Zatwierdź zaminy" />
+            </form>
+        </div>
+        <div class="row">
+            <h3> Dodaj stone publikacji:</h3>
+            <form asp-action="AddToken" asp-controller="Token" method="post" class="col-12">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group row">
+                    <label asp-for="NewTokenText" class="col-sm-2 col-form-label">Token:</label>
+                    <div class="col-sm-10">
+                        <input asp-for="NewTokenText" class="form-control" />
+                        <span asp-validation-summary="NewTokenText" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="NewPageId" class="col-sm-2 col-form-label">Id strony </label>
+                    <div class=" col-sm-10">
+                        <input asp-for="NewPageId" class="form-control" />
+                        <span asp-validation-for="NewPageId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="NewNamePage" class="col-sm-2 col-form-label">Nazwa strony </label>
+                    <div class=" col-sm-10">
+                        <input asp-for="NewNamePage" class="form-control" />
+                        <span asp-validation-for="NewNamePage" class="text-danger"></span>
+                    </div>
+                </div>
+                <input type="submit" value="Dodaj" />
+            </form>
+        </div>*@
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-primary m-1 w-100 text-center" id="btnFirmProfillUpdate" onclick="DisplayFirmProfileUpdateForm()">Edytuj porfil firmy</button>
+        <button class="btn btn-primary m-1 w-100 text-center" id="btnAddPostPage" onclick="DisplaypostPageForm()">Dodaj stronę publikacji</button>
+
+    </div>
+</div>
+<div class="row d-none" id="PostPageForm">
+    <h3> Dodaj stone publikacji:</h3>
+    <form asp-action="AddToken" asp-controller="Token" method="post" class="col-12">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group row">
+            <label asp-for="NewTokenText" class="col-sm-2 col-form-label">Token:</label>
+            <div class="col-sm-10">
+                <input asp-for="NewTokenText" class="form-control" />
+                <span asp-validation-summary="NewTokenText" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label asp-for="NewPageId" class="col-sm-2 col-form-label">Id strony </label>
+            <div class=" col-sm-10">
+                <input asp-for="NewPageId" class="form-control" />
+                <span asp-validation-for="NewPageId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label asp-for="NewNamePage" class="col-sm-2 col-form-label">Nazwa strony </label>
+            <div class=" col-sm-10">
+                <input asp-for="NewNamePage" class="form-control" />
+                <span asp-validation-for="NewNamePage" class="text-danger"></span>
+            </div>
+        </div>
+        <input type="submit" value="Dodaj" />
+    </form>
+</div>
+<script>
+    //document.getElementById("btnAddPostPage").click(){
+    //    document.getElementById("PostPageForm").classList.remove("d-none");
+    //}
+    function DisplaypostPageForm() {
+        var element = document.getElementById("PostPageForm");
+        if (element.classList) {
+            element.classList.toggle("d-none");
+        } else {
+            // For IE9
+            var classes = element.className.split(" ");
+            var i = classes.indexOf("d-none");
+
+            if (i >= 0)
+                classes.splice(i, 1);
+            else
+                classes.push("d-none");
+            element.className = classes.join(" ");
+        }
+    }
+    function DisplayFirmProfileUpdateForm() {
+        var elementUpdate = document.getElementById("acountProfileUpdateForm");
+        var elementName = document.getElementById("accountProfileName");
+        var elementDescription = document.getElementById("accountProfileDescription");
+
+        if (elementUpdate.classList && elementDescription.classList && elementName.classList) {
+                elementName.classList.toggle("d-none");
+                elementDescription.classList.toggle("d-none");
+                elementUpdate.classList.toggle("d-none");
+            } else {
+                // For IE9
+                var classesName = elementName.className.split(" ");
+                var classesDescription = elementDescription.className.split(" ");
+                var classesUpdate = elementUpdate.className.split(" ");
+                var iName = classes.indexOf("d-none");
+                var iDescription = classes.indexOf("d-none");
+                var iUpdate = classesUpdate.indexOf("d-none");
+
+                if (iName >= 0)
+                    classesName.splice(i, 1);
+                else
+                    classesName.push("d-none");
+                elementName.className = classes.join(" ");
+
+                if (iDescription >= 0)
+                    classesDescription.splice(i, 1);
+                else
+                    classesDescription.push("d-none");
+                elementDescription.className = classes.join(" ");
+
+                if (iUpdate >= 0)
+                    classesUpdate.splice(iUpdate, 1);
+                else
+                    classesUpdate.push("d-none");
+                element.className = classesUpdate.join(" ");
+            } 
+    }
+</script>

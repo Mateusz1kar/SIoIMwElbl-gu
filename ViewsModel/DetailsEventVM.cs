@@ -14,5 +14,9 @@ namespace PracaDyplomowa.ViewsModel
         public string error { get; set; }
         public IFormFile eventImage { get; set; }
         public string DeleteFileName { get; set; }
+        public string PublicationText { get; set; }
+        public List<Token> Tokens { get; set; }
+        public string PublicationTokenText { get; set; }
+        public string PublicationPageId { get; set; }
     }
 }

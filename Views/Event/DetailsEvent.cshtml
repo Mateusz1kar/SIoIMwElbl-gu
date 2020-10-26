@@ -1,114 +1,311 @@
 ﻿@model PracaDyplomowa.ViewsModel.DetailsEventVM
-
-
-<div class="col-sm-6 col-lg-4">
-    @if (Model.eventDetail.Images!=null)
-    {
-        foreach (var item in Model.eventDetail.Images)
+<div class="row">
+    <div class="col-12 text-center" id="EventName"><h2>@Model.eventDetail.Name</h2></div>
+</div>
+<div class="row">
+    
+    <div class="col-md-8" id="EventData">
+        @if (Model.eventDetail.Images != null)
         {
-            <img src="~/Images/EventImages/@item.ImageName" />
-            <form method="post" asp-action="DeleteEventImage" asp-controller="Image">
-                <div class="d-none form-group">
-                    <input asp-for="@Model.DeleteFileName" value="@item.ImageName" />
-                </div>
-                <div class="d-none form-group">
-                    <input asp-for="@Model.id" value="@item.EventId" />
-                </div>
-                <input type="submit" value="Usuń" />
-            </form>
-        }
-    }
-    <h3>@Model.eventDetail.EventId</h3>
-    <h3>@Model.eventDetail.Name</h3>
-    <h3>@Model.eventDetail.ShortDescription</h3>
-    <h3>@Model.eventDetail.Description</h3>
-    <h3>@Model.eventDetail.Place</h3>
-    <h3>@Model.eventDetail.DateStart</h3>
-    <h3>@Model.eventDetail.DateEnd</h3>
+            foreach (var item in Model.eventDetail.Images)
+            {
+                <img src="~/Images/EventImages/@item.ImageName" />
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form method="post" asp-action="DeleteEventImage" asp-controller="Image">
+                        <div class="d-none form-group">
+                            <input asp-for="@Model.DeleteFileName" value="@item.ImageName" />
+                        </div>
+                        <div class="d-none form-group">
+                            <input asp-for="@Model.id" value="@item.EventId" />
+                        </div>
+                        <input type="submit" value="Usuń" />
+                    </form>
+                }
 
+            }
+        }
+
+        <h3>Miejsce: @Model.eventDetail.Place</h3>
+        <h3>Data rozpoczęcia: @Model.eventDetail.DateStart</h3>
+        <h3>Data Zakończenia: @Model.eventDetail.DateEnd</h3>
+        <h3>@Model.eventDetail.Description</h3>
+
+
+
+
+    </div>
+    <div  class="col-md-7 d-none m-1" id="updateEventForm">
+        <form method="post" asp-action="UpdateEvent" class="" >
+            <div class="form-group">
+
+                <div class="col-sm-10 d-none">
+                    <input asp-for="@Model.eventDetail.EventId" value="@Model.eventDetail.EventId" class="form-control" />
+                    <span asp-validation-for="@Model.eventDetail.EventId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.eventDetail.Name" class="custom-control-label col-2">Nazwa</label>
+                <div class="col-sm-10">
+                    <input asp-for="@Model.eventDetail.Name" class="form-control" />
+                    <span asp-validation-for="@Model.eventDetail.Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.eventDetail.ShortDescription" class="custom-control-label col-2">Krótki opis</label>
+                <div class="col-sm-10">
+                    <input asp-for="@Model.eventDetail.ShortDescription" class="form-control" />
+                    <span asp-validation-for="@Model.eventDetail.ShortDescription" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.eventDetail.Description" class="custom-control-label col-2">Opis</label>
+                <div class="col-sm-10">
+                    <input asp-for="@Model.eventDetail.Description" class="form-control" />
+                    <span asp-validation-for="@Model.eventDetail.Description" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.eventDetail.Place" class="custom-control-label col-2">Miejsce</label>
+                <div class="col-sm-10">
+                    <input asp-for="@Model.eventDetail.Place" class="form-control" />
+                    <span asp-validation-for="@Model.eventDetail.Place" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="@Model.eventDetail.DateStart" class="custom-control-label col-2">Data początku</label>
+                <div class="col-sm-10">
+                    <input asp-for="@Model.eventDetail.DateStart" class="form-control" type="date" />
+                    <span asp-validation-for="@Model.eventDetail.DateStart" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.eventDetail.DateEnd" class="custom-control-label col-2">Data końca</label>
+                <div class="col-sm-10">
+                    <input asp-for="@Model.eventDetail.DateEnd" class="form-control" type="date" />
+                    <span asp-validation-for="@Model.eventDetail.DateEnd" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" />
+            </div>
+
+        </form>
+    </div>
+    <div class="col-md-4">
+
+        <button class="btn btn-primary m-1 w-100 text-center" id="btnPublicationFormList" onclick="displayublicationFormList()">Opublikuj wydarzenie</button>
+        <button class="btn btn-primary m-1 w-100 text-center" onclick="displayImageAddForm()">Dodaj obraz promujący</button>
+        <button class="btn btn-primary m-1 w-100 text-center" onclick="displayEventUpdateForm()">Aktualizuj informacje o wydarzeniu </button>
+        <form class="form-horizontal border" method="delete" asp-action="DeleteEvent">
+            <div class="form-group d-none">
+                <input asp-for="@Model.id" value="@Model.eventDetail.EventId" />
+            </div>
+            <input type="submit" class="btn-danger btn  m-1 w-100 text-center" value="Usuń event" />
+        </form>
+
+    </div>
 
 </div>
+<script>
+    function displayEventUpdateForm() {
+        var elementUpdate = document.getElementById("updateEventForm");
+        var elementName = document.getElementById("EventName");
+        var elementDescription = document.getElementById("EventData");
 
-<form class="form-horizontal border" method="delete" asp-action="DeleteEvent">
-    <div class="form-group d-none">
-        <input asp-for="@Model.id" value="@Model.eventDetail.EventId"/>
-    </div>
-    <input type="submit" class="btn-danger" value="Usuń event" />
-</form> 
+        if (elementUpdate.classList && elementDescription.classList && elementName.classList) {
+            elementName.classList.toggle("d-none");
+            elementDescription.classList.toggle("d-none");
+            elementUpdate.classList.toggle("d-none");
+        } else {
+            // For IE9
+            var classesName = elementName.className.split(" ");
+            var classesDescription = elementDescription.className.split(" ");
+            var classesUpdate = elementUpdate.className.split(" ");
+            var iName = classes.indexOf("d-none");
+            var iDescription = classes.indexOf("d-none");
+            var iUpdate = classesUpdate.indexOf("d-none");
 
-<form enctype="multipart/form-data" id="sever" asp-action="AddEventImage" asp-controller="Image" method="post" class="form-horizontal " role="form">
-    
-    <div class="form-group d-none">
-        <input asp-for="@Model.id" value="@Model.eventDetail.EventId" />
-    </div>
-    <div class="form-group">
-        <label class="custom-control-label col-2" asp-for="@Model.eventImage">Obraz promujący</label>
-        <div class="col-sm-10 custom-file">
-            <input lass="form-control custom-file-input" asp-for="@Model.eventImage" />
-            <span class="text-danger" asp-validation-for="@Model.eventImage"></span>
+            if (iName >= 0)
+                classesName.splice(i, 1);
+            else
+                classesName.push("d-none");
+            elementName.className = classes.join(" ");
+
+            if (iDescription >= 0)
+                classesDescription.splice(i, 1);
+            else
+                classesDescription.push("d-none");
+            elementDescription.className = classes.join(" ");
+
+            if (iUpdate >= 0)
+                classesUpdate.splice(iUpdate, 1);
+            else
+                classesUpdate.push("d-none");
+            element.className = classesUpdate.join(" ");
+        }
+    }
+    function displayImageAddForm() {
+        var element = document.getElementById("AddImageForm");
+        if (element.classList) {
+            element.classList.toggle("d-none");
+        } else {
+            // For IE9
+            var classes = element.className.split(" ");
+            var i = classes.indexOf("d-none");
+
+            if (i >= 0)
+                classes.splice(i, 1);
+            else
+                classes.push("d-none");
+            element.className = classes.join(" ");
+        }
+    }
+    function displayublicationFormList() {
+        var element = document.getElementById("publikactionFormList");
+        if (element.classList) {
+            element.classList.toggle("d-none");
+        } else {
+            // For IE9
+            var classes = element.className.split(" ");
+            var i = classes.indexOf("d-none");
+
+            if (i >= 0)
+                classes.splice(i, 1);
+            else
+                classes.push("d-none");
+            element.className = classes.join(" ");
+        }
+    }
+    function publicationTexSher() {
+        var element = document.getElementById("publicationText");
+        var elementFrorm = document.getElementsByClassName("publicationTextForm");
+        var elementImageForm = document.getElementsByClassName("publikationImageText");
+        //var elementFrorm = document.getElementById("publicationTextForm");
+        //var elementImageForm = document.getElementById("publikationImageText");
+        //document.querySelector("form[name='publikationForm'] > input.publicationTextForm").value = "blah"
+        console.log(elementFrorm);
+        for (var i = 0; i < elementFrorm.length; i++) {
+            elementFrorm[i].value = element.value;
+        }
+        for (var i = 0; i < elementImageForm.length; i++) {
+            elementImageForm[i].value = element.value;
+        }
+        //elementFrorm.value = element.value;
+        //elementImageForm.value = element.value;
+    }
+</script>
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="row d-none border border-dark m-1" id="publikactionFormList">
+        <div class="col-12 text-center"><h3>Opublikuj Wydarzenie</h3></div>
+        <div class="col-12">
+            @if (Model.Tokens != null)
+            {
+                <div class="col-12">
+                    <label class="col-form-label col-12"><h4>Treść publikacji:</h4></label>
+                    <input class="form-control" type="text" onchange="publicationTexSher()" id="publicationText" value="@Model.eventDetail.ShortDescription" />
+
+                </div>
+                <div class="col-12  ">
+                    <h4>Strony publikacji:</h4>
+                    <ul class="col-12 m-1">
+                        @foreach (var item in Model.Tokens)
+                        {
+
+                            <li>
+                                <div class="row">
+                                    <h5 class="col-md-4">@item.NamePage</h5>
+                                    <form asp-action="PublicToFacebook" method="post" asp-controller="Publication" class="col-md-2 m-1" name="publikationForm">
+                                        <div class="form-group d-none">
+                                            <input asp-for="PublicationTokenText" value="@item.TokenText" />
+                                        </div>
+                                        <div class="form-group d-none">
+                                            <input asp-for="PublicationPageId" value="@item.PageId" />
+                                        </div>
+                                        <div class="form-group d-none">
+                                            <input asp-for="id" value="@Model.eventDetail.EventId" />
+                                        </div>
+                                        <div class="form-group d-none">
+                                            <label class="custom-control-label col-2">Treść publikacji</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control publicationTextForm" id="publicationTextForm" asp-for="PublicationText" value="@Model.eventDetail.ShortDescription" />
+                                                <span asp-validation-for="PublicationText" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <input type="submit" class="btn btn-primary" />
+                                    </form>
+                                    <form asp-action="PublicImageToFacebook" method="post" name="publikationImageForm" class="col-md-4  m-1" asp-controller="Publication">
+                                        <div class="form-group d-none">
+                                            <input asp-for="PublicationTokenText" value="@item.TokenText" />
+                                        </div>
+                                        <div class="form-group d-none">
+                                            <input asp-for="PublicationPageId" value="@item.PageId" />
+                                        </div>
+                                        <div class="form-group d-none">
+                                            <input asp-for="id" value="@Model.eventDetail.EventId" />
+                                        </div>
+                                        <div class="form-group d-none">
+                                            <label class="custom-control-label col-2">Treść publikacji</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control publikationImageText" asp-for="PublicationText" id="publikationImageText" value="@Model.eventDetail.ShortDescription" />
+                                                <span asp-validation-for="PublicationText" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <input type="submit" class="btn btn-primary" value="Opublikuj z obrazem promującym" />
+                                    </form>
+                                </div>
+
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+
+            }
         </div>
     </div>
-    <div class="d-none">
-    </div>
-    <input type="submit" class="btn btn-primary" />
-</form>
 
 
-<form method="post" asp-action="UpdateEvent">
-    <div class="form-group">
 
-        <div class="col-sm-10">
-            <input asp-for="@Model.eventDetail.EventId" value="@Model.eventDetail.EventId" class="" form-control" />
-            <span asp-validation-for="@Model.eventDetail.EventId" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="@Model.eventDetail.Name" class="custom-control-label col-2">Nazwa</label>
-        <div class="col-sm-10">
-            <input asp-for="@Model.eventDetail.Name" class="form-control" />
-            <span asp-validation-for="@Model.eventDetail.Name" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="@Model.eventDetail.ShortDescription" class="custom-control-label col-2">Krótki opis</label>
-        <div class="col-sm-10">
-            <input asp-for="@Model.eventDetail.ShortDescription" class="form-control" />
-            <span asp-validation-for="@Model.eventDetail.ShortDescription" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="@Model.eventDetail.Description" class="custom-control-label col-2">Opis</label>
-        <div class="col-sm-10">
-            <input asp-for="@Model.eventDetail.Description" class="form-control" />
-            <span asp-validation-for="@Model.eventDetail.Description" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="@Model.eventDetail.Place" class="custom-control-label col-2">Miejsce</label>
-        <div class="col-sm-10">
-            <input asp-for="@Model.eventDetail.Place" class="form-control" />
-            <span asp-validation-for="@Model.eventDetail.Place" class="text-danger"></span>
-        </div>
-    </div>
+    <div class="row d-none border border-dark m-1" id="AddImageForm">
+        <div class="col-12 text-center"><h3>Dodaj obraz promujący </h3></div>
+        <div class="col-12">
+            <form enctype="multipart/form-data" asp-action="AddEventImage" asp-controller="Image" method="post" class="form-horizontal " role="form">
 
-    <div class="form-group">
-        <label asp-for="@Model.eventDetail.DateStart" class="custom-control-label col-2">Data początku</label>
-        <div class="col-sm-10">
-            <input asp-for="@Model.eventDetail.DateStart" class="form-control" type="date" />
-            <span asp-validation-for="@Model.eventDetail.DateStart" class="text-danger"></span>
-        </div>
+                <div class="form-group d-none">
+                    <input asp-for="@Model.id" value="@Model.eventDetail.EventId" />
+                </div>
+                <div class="form-group">
+                    @*<label class="col-form-label col-2" asp-for="@Model.eventImage">Obraz promujący</label>*@
+                    <div class="col-12 custom-file text-center">
+                        <input class="  border" asp-for="@Model.eventImage" />
+                        <span class="text-danger" asp-validation-for="@Model.eventImage"></span>
+                    </div>
+                </div>
+                <div class="d-none">
+                </div>
+                <input type="submit" class="btn btn-primary float-right" />
+            </form>
+        </div>       
     </div>
-    <div class="form-group">
-        <label asp-for="@Model.eventDetail.DateEnd" class="custom-control-label col-2">Data końca</label>
-        <div class="col-sm-10">
-            <input asp-for="@Model.eventDetail.DateEnd" class="form-control" type="date" />
-            <span asp-validation-for="@Model.eventDetail.DateEnd" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <input type="submit" />
-    </div>
+        @*<form enctype="multipart/form-data" class="border-dark" method="post" asp-action="PublicToFacebook" asp-controller="Publication">
+                <div class="form-group d-none">
+                    <input asp-for="id" value="@Model.eventDetail.EventId" />
+                </div>
+                <div class="form-group">
+                    <label class="custom-control-label col-2">Treść publikacji</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" asp-for="PublicationText" value="@Model.eventDetail.ShortDescription" />
+                        <span asp-validation-for="PublicationText" class="text-danger"></span>
+                    </div>
+                </div>
+                <input type="submit" class="btn btn-primary" value="Opublikuj" />
+            </form>*@
 
-</form>
+        
 
 
+
+        }

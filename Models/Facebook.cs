@@ -120,11 +120,72 @@ namespace PracaDyplomowa.Models
             }
         }
 
+        //public string PublishImageListToFacebook(string postText, List<string> pictureURL)
+        //{
+        //    try
+        //    {
+        //        // upload picture first
+        //        var rezImage = Task.Run(async () =>
+        //        {
+        //            using (var http = new HttpClient())
+        //            {
+                        
+        //                return await UploadPhoto(pictureURL);
+        //            }
+        //        });
+        //        var rezImageJson = JObject.Parse(rezImage.Result.Item2);
+
+        //        if (rezImage.Result.Item1 != 200)
+        //        {
+        //            try // return error from JSON
+        //            {
+        //                return $"Error uploading photo to Facebook. {rezImageJson["error"]["message"].Value<string>()}";
+        //            }
+        //            catch (Exception ex) // return unknown error
+        //            {
+        //                // log exception somewhere
+        //                return $"Unknown error uploading photo to Facebook. {ex.Message}";
+        //            }
+        //        }
+        //        // get post ID from the response
+        //        string postID = rezImageJson["post_id"].Value<string>();
+
+        //        // and update this post (which is actually a photo) with your text
+        //        var rezText = Task.Run(async () =>
+        //        {
+        //            using (var http = new HttpClient())
+        //            {
+        //                return await UpdatePhotoWithPost(postID, postText);
+        //            }
+        //        });
+        //        var rezTextJson = JObject.Parse(rezText.Result.Item2);
+
+        //        if (rezText.Result.Item1 != 200)
+        //        {
+        //            try // return error from JSON
+        //            {
+        //                return $"Error posting to Facebook. {rezTextJson["error"]["message"].Value<string>()}";
+        //            }
+        //            catch (Exception ex) // return unknown error
+        //            {
+        //                // log exception somewhere
+        //                return $"Unknown error posting to Facebook. {ex.Message}";
+        //            }
+        //        }
+
+        //        return "OK";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // log exception somewhere
+        //        return $"Unknown error publishing post to Facebook. {ex.Message}";
+        //    }
+        //}
         /// <summary>
         /// Upload a picture (photo)
         /// </summary>
         /// <returns>StatusCode and JSON response</returns>
-        /// <param name="photoURL">URL of the picture to upload</param>
+        /// <param/* name="photoURL*/">URL of the picture to upload</param>
         public async Task<Tuple<int, string>> UploadPhoto(string photoURL)
         {
             using (var http = new HttpClient())

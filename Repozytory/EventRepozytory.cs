@@ -44,6 +44,24 @@ namespace PracaDyplomowa.Repozytory
             return e;
         }
 
+        public IEnumerable<Event> searchEvents(string name, bool searchByDS, DateTime DateStart, bool searchByDE, DateTime DateEnd, bool typeSort)
+        {
+            IEnumerable<Event> eventlist;
+            if(searchByDS==true & searchByDE==true)
+                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name==null) & e.DateStart >= DateStart & e.DateEnd <= DateEnd).OrderBy(e => e.DateStart).ToList();
+            else if (searchByDS == true & searchByDE == false)
+                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name == null) & e.DateStart >= DateStart).OrderBy(e => e.DateStart).ToList();
+            else if (searchByDS == false & searchByDE == true)
+                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name == null) & e.DateEnd <= DateEnd).OrderBy(e => e.DateStart).ToList();
+            else
+                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name == null)).OrderBy(e => e.DateStart).ToList();
+            if (!typeSort)
+            {
+                eventlist=eventlist.Reverse();
+            }
+            return eventlist;
+        }
+
         public void update(Event e)
         {
             var ecentUpdate = _appDbContext.Events.FirstOrDefault(ev=>ev.EventId== e.EventId);

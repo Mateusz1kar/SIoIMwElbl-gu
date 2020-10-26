@@ -14,8 +14,44 @@
         <h3>@e.DateStart</h3>
         <h3>@e.DateEnd</h3>
 
-
+        <form asp-action="DetailsEvent" asp-controller="Event" method="post">
+            <div class="form-group d-none">
+                <input asp-for="id" value="@e.EventId" />
+            </div>
+            <input type="submit" class="btn btn-primary" value="Szczegóły" />
+        </form>
     </div>
-
+    
 
 }
+<form method="post" asp-action="SearchEvents">
+    <div class="form-group">
+        <label class="col-form-label" asp-for="searchName">Nazwa</label>
+        <div class="">
+            <input class="form-control" asp-for="searchName" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input class="form-control" asp-for="sortByDS" type="checkbox" value="true" />
+        <label class="col-form-label" asp-for="searcDateStart">Rozpoczęte przed</label>
+        <div class="">
+            <input class="form-control" asp-for="searcDateStart" type="date" value="@DateTime.Today" />
+        </div>
+    </div>
+    <div class="form-group">
+        <input class="form-control" asp-for="sortByDE" type="checkbox" value="true" />
+        <label class="col-form-label" asp-for="searcDateEnd">Zakończone do</label>
+        <div class="">
+            <input class="form-control" asp-for="searcDateEnd" type="date" value="@DateTime.Today"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-form-label" asp-for="typeSort">Typ sortowania</label>
+        <div class="">
+            <input class="form-control" asp-for="typeSort" type="radio" value="Down" /> <label class="col-form-label" asp-for="typeSort">Malejąco</label>
+            <input class="form-control" asp-for="typeSort" type="radio" value="Up" /> <label class="col-form-label" asp-for="typeSort">Rosnąco</label>
+        </div>
+    </div>
+    <input type="submit" class="" value="Szukaj" />
+</form>

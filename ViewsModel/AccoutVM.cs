@@ -13,6 +13,9 @@ namespace PracaDyplomowa.ViewsModel
         public string FirmDescriotion { get; set; }
         public List<Token> Tokens { get; set; }
         public List<Event> Events { get; set; }
+        public string NewTokenText { get; set; }
+        public string NewPageId { get; set; }
+        public string NewNamePage { get; set; }
 
     }
 }

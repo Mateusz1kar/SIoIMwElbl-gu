@@ -6,11 +6,12 @@ using PracaDyplomowa.Models;
 
 namespace PracaDyplomowa.Interface
 {
-    interface ITokenRepozytory
+    public interface ITokenRepozytory
     {
         void addToken(Token token);
         void dellToken(string TokenText );
         Token getToken(string TokenText );
         List<Token> getAll();
+        bool TokenExist(string TokenText);
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using PracaDyplomowa.Models;
+using PracaDyplomowa.ViewsModel;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace PracaDyplomowa.Controllers
@@ -18,18 +19,54 @@ namespace PracaDyplomowa.Controllers
             this.hostingEnvironment = hostingEnvironment;
         }
         // GET: /<controller>/
-        public async Task<IActionResult> PublicToFacebook()
+        //public async Task<IActionResult> PublicToFacebook()
+        //{
+        //    //FacebookApi facebookApi = new FacebookApi("103888034769355",
+        //    //    "EAAXc743WXTkBAPDtK2tyTfiGvOMGiTG4FW79Ljgd7c5uMvxo8GB27vr6VEKFCcafNwIjeJ9nw7sjrFr7FHq0rCaBLP9wTJLKHZAwtG5TxCMlPTZC7c5EkspemK8AvFwOLZCH79m8jMXRDoMiiAlinbKDZByPNw3FOp5ZBB0wO5gVZCESKMOkFuNVXFb4ZBFTkOTwG6wltXPWwZDZD");
+        //    //var result = await facebookApi.PublishMessage("Test");
+        //    Facebook facebook = new Facebook(
+        //        "EAAXc743WXTkBAPDtK2tyTfiGvOMGiTG4FW79Ljgd7c5uMvxo8GB27vr6VEKFCcafNwIjeJ9nw7sjrFr7FHq0rCaBLP9wTJLKHZAwtG5TxCMlPTZC7c5EkspemK8AvFwOLZCH79m8jMXRDoMiiAlinbKDZByPNw3FOp5ZBB0wO5gVZCESKMOkFuNVXFb4ZBFTkOTwG6wltXPWwZDZD",
+        //        "103888034769355");
+        //    string image = Path.Combine(hostingEnvironment.WebRootPath, "Images\\", "kotek.jpg");
+        //    string imgeUrl = "https://localhost:44378/" + "Images/kotek.jpg";
+        //    string result = facebook.PublishToFacebook("some text", "https://5.allegroimg.com/s512/03352a/ba4fe19545a98511914e9eb03325/PODKLADKA-LAMINOWANA-A2-NA-BIURKO-KOT-KOTEK-KOTKI"); //"https://localhost:44378/Images/kotek.jpg");//"~\\Images\\kotek.jpg"
+        //    //var result = await facebook.PublishSimplePost("some text");
+        //    //Console.WriteLine(result);
+        //    return RedirectToAction("Index","Home");
+        //}
+        public async Task<IActionResult> PublicToFacebook(DetailsEventVM model)
         {
-            //FacebookApi facebookApi = new FacebookApi("101060971721836",
-            //    "EAAXc743WXTkBAIX92wzfxON9AjGFo9Qr6iUz6Tjq6yFsA4LbsxVGBHeToYA1d5ovnSO7d1gqU4DuLhOYuE4nTETZCi0QKbHVQ6DEnuPNkvL5IO6kHs3XdPA3dBrSFLwqY3RbpPOgmtMazUc7QWkURGtXcZCQk7E7Fi3xUYgSjBFS2LvoZCKqiGtfAyVQts7k0rDaCWzAwZDZD");
-            //var result = await facebookApi.PublishMessage("Test");
-            Facebook facebook = new Facebook("EAAXc743WXTkBAIX92wzfxON9AjGFo9Qr6iUz6Tjq6yFsA4LbsxVGBHeToYA1d5ovnSO7d1gqU4DuLhOYuE4nTETZCi0QKbHVQ6DEnuPNkvL5IO6kHs3XdPA3dBrSFLwqY3RbpPOgmtMazUc7QWkURGtXcZCQk7E7Fi3xUYgSjBFS2LvoZCKqiGtfAyVQts7k0rDaCWzAwZDZD",
-                "101060971721836");
-            string image = Path.Combine(hostingEnvironment.WebRootPath, "Images\\","kotek.jpg");
-            string imgeUrl = "https://localhost:44378/"+ "Images/kotek.jpg";
-            string result = facebook.PublishToFacebook("some text", "https://localhost:44378/Images/kotek.jpg");//"~\\Images\\kotek.jpg"
-            Console.WriteLine(result);
-            return RedirectToAction("Index","Home");
+            var error = "";
+            Facebook facebook = new Facebook(
+                model.PublicationTokenText,
+                model.PublicationPageId
+               //"EAAXc743WXTkBAGtC3WFZBLFxKgRRbrZAgvsarX7ZCN0ubCTIwaXZBeF0CbjF1VLLdxkXr0THi5ZBX3biK522GaMWneeZBOHTl5ESqCVwHW1SNNvl5JTuL7Gl0sclAhkPOyztukhVu8TdGE2lmLRqUmf9cvoZAZBiDVPxt0QE86PfhptJtHN61XzZC",
+               //"103888034769355"
+               );
+            var result = await facebook.PublishSimplePost(model.PublicationText);
+            if (result.Item1 != 200)
+            {
+                error = "Wystąpił błąd publikacja nie została wykonana";
+            }
+            return RedirectToAction("DetailsEvent", "Event", new { id = model.id, error = error });
+
+        }
+        public async Task<IActionResult> PublicImageToFacebook(DetailsEventVM model)
+        {
+            var error = "";
+            Facebook facebook = new Facebook(
+                model.PublicationTokenText,
+                model.PublicationPageId
+               );
+            //string image = Path.Combine(hostingEnvironment.WebRootPath, "Images\\EventImages\\"+ model.eventImage.Name);
+            //string imgeUrl = "https://localhost:44378/" + "Images/kotek.jpg";
+            string img = "https://dziendobry.tvn.pl/media/cache/content_cover/imie-dla-kotki-jak-wybrac-oryginalne-imie-i-dobrze-dopasowac-je-do-kotki-jpg.jpg";
+            string img2 = "https://i.ytimg.com/vi/S4UCxJK27D8/hqdefault.jpg";
+            List<string> imgList = new List<string>() { img, img2 };
+           var result =  facebook.PublishToFacebook(model.PublicationText, img);
+           
+            return RedirectToAction("DetailsEvent", "Event", new { id = model.id, error = error });
+
         }
     }
 }

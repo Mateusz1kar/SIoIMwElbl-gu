@@ -33,8 +33,20 @@ namespace PracaDyplomowa.Repozytory
 
         public FirmAccount getFirmAccount(string userName)
         {
+            var pomToken = _appDbContext.Tokens.ToList();
             return _appDbContext.FirmAccounts.FirstOrDefault(fa => fa.UserName == userName);
 
+        }
+
+        public void updateFirmAccount(string userName,string firmName, string firmDescription)
+        {
+            var firmAccount = getFirmAccount(userName);
+            if (firmAccount!= null)
+            {
+                firmAccount.FirmName = firmName;
+                firmAccount.FirmDescriotion = firmDescription;
+                _appDbContext.SaveChanges();
+            }
         }
     }
 }
