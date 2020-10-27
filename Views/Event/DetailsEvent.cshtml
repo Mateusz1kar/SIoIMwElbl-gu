@@ -3,28 +3,9 @@
     <div class="col-12 text-center" id="EventName"><h2>@Model.eventDetail.Name</h2></div>
 </div>
 <div class="row">
-    
-    <div class="col-md-8" id="EventData">
-        @if (Model.eventDetail.Images != null)
-        {
-            foreach (var item in Model.eventDetail.Images)
-            {
-                <img src="~/Images/EventImages/@item.ImageName" />
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <form method="post" asp-action="DeleteEventImage" asp-controller="Image">
-                        <div class="d-none form-group">
-                            <input asp-for="@Model.DeleteFileName" value="@item.ImageName" />
-                        </div>
-                        <div class="d-none form-group">
-                            <input asp-for="@Model.id" value="@item.EventId" />
-                        </div>
-                        <input type="submit" value="Usuń" />
-                    </form>
-                }
 
-            }
-        }
+    <div class="col-md-8" id="EventData">
+
 
         <h3>Miejsce: @Model.eventDetail.Place</h3>
         <h3>Data rozpoczęcia: @Model.eventDetail.DateStart</h3>
@@ -35,8 +16,8 @@
 
 
     </div>
-    <div  class="col-md-7 d-none m-1" id="updateEventForm">
-        <form method="post" asp-action="UpdateEvent" class="" >
+    <div class="col-md-7 d-none m-1" id="updateEventForm">
+        <form method="post" asp-action="UpdateEvent" class="">
             <div class="form-group">
 
                 <div class="col-sm-10 d-none">
@@ -61,7 +42,7 @@
             <div class="form-group">
                 <label asp-for="@Model.eventDetail.Description" class="custom-control-label col-2">Opis</label>
                 <div class="col-sm-10">
-                    <input asp-for="@Model.eventDetail.Description" class="form-control" />
+                    <textarea asp-for="@Model.eventDetail.Description" class="form-control" rows="3"></textarea>
                     <span asp-validation-for="@Model.eventDetail.Description" class="text-danger"></span>
                 </div>
             </div>
@@ -94,10 +75,9 @@
         </form>
     </div>
     <div class="col-md-4">
-
+        <button class="btn btn-primary m-1 w-100 text-center" onclick="displayEventUpdateForm()">Aktualizuj informacje o wydarzeniu </button>
         <button class="btn btn-primary m-1 w-100 text-center" id="btnPublicationFormList" onclick="displayublicationFormList()">Opublikuj wydarzenie</button>
         <button class="btn btn-primary m-1 w-100 text-center" onclick="displayImageAddForm()">Dodaj obraz promujący</button>
-        <button class="btn btn-primary m-1 w-100 text-center" onclick="displayEventUpdateForm()">Aktualizuj informacje o wydarzeniu </button>
         <form class="form-horizontal border" method="delete" asp-action="DeleteEvent">
             <div class="form-group d-none">
                 <input asp-for="@Model.id" value="@Model.eventDetail.EventId" />
@@ -106,6 +86,29 @@
         </form>
 
     </div>
+    @if (Model.eventDetail.Images != null)
+    {
+        foreach (var item in Model.eventDetail.Images)
+        {
+<div class="row text-center border m-auto m-1">
+    <img src="~/Images/EventImages/@item.ImageName" />
+    @if (User.Identity.IsAuthenticated)
+    {
+        <form method="post" asp-action="DeleteEventImage" asp-controller="Image">
+            <div class="d-none form-group">
+                <input asp-for="@Model.DeleteFileName" value="@item.ImageName" />
+            </div>
+            <div class="d-none form-group">
+                <input asp-for="@Model.id" value="@item.EventId" />
+            </div>
+            <input type="submit"  class="btn btn-danger align-bottom" value="Usuń" />
+        </form>
+    }
+</div>
+           
+
+        }
+    }
 
 </div>
 <script>
