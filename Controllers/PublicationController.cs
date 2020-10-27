@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using PracaDyplomowa.Interface;
 using PracaDyplomowa.Models;
 using PracaDyplomowa.ViewsModel;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,9 +15,11 @@ namespace PracaDyplomowa.Controllers
     public class PublicationController : Controller
     {
         private readonly IHostingEnvironment hostingEnvironment;
-        public PublicationController(IHostingEnvironment hostingEnvironment)
+        private readonly IImageRepozytory _imageRepozytory;
+        public PublicationController(IHostingEnvironment hostingEnvironment, IImageRepozytory imageRepozytory)
         {
             this.hostingEnvironment = hostingEnvironment;
+            _imageRepozytory = imageRepozytory;
         }
         // GET: /<controller>/
         //public async Task<IActionResult> PublicToFacebook()
@@ -58,13 +61,22 @@ namespace PracaDyplomowa.Controllers
                 model.PublicationTokenText,
                 model.PublicationPageId
                );
-            //string image = Path.Combine(hostingEnvironment.WebRootPath, "Images\\EventImages\\"+ model.eventImage.Name);
-            //string imgeUrl = "https://localhost:44378/" + "Images/kotek.jpg";
-            string img = "https://dziendobry.tvn.pl/media/cache/content_cover/imie-dla-kotki-jak-wybrac-oryginalne-imie-i-dobrze-dopasowac-je-do-kotki-jpg.jpg";
-            string img2 = "https://i.ytimg.com/vi/S4UCxJK27D8/hqdefault.jpg";
-            List<string> imgList = new List<string>() { img, img2 };
-           var result =  facebook.PublishToFacebook(model.PublicationText, img);
-           
+            List<EventImages> imageList = _imageRepozytory.findEventImages(model.id);
+            if (imageList.Count>0)
+            {
+                string image = Path.Combine(hostingEnvironment.WebRootPath, "Images\\EventImages\\" + imageList[0].ImageName);
+                //string imgeUrl = "https://localhost:44378/" + "Images/kotek.jpg";
+                //string img = "https://dziendobry.tvn.pl/media/cache/content_cover/imie-dla-kotki-jak-wybrac-oryginalne-imie-i-dobrze-dopasowac-je-do-kotki-jpg.jpg";
+                //string img2 = "https://i.ytimg.com/vi/S4UCxJK27D8/hqdefault.jpg";
+                //List<string> imgList = new List<string>() { img, img2 };
+                var result = facebook.PublishToFacebook(model.PublicationText, image);
+
+            }
+            else
+            {
+                error = "Brak zdjęć do piblikacji";
+            }
+
             return RedirectToAction("DetailsEvent", "Event", new { id = model.id, error = error });
 
         }
