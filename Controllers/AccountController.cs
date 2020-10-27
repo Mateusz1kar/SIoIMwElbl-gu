@@ -9,6 +9,8 @@ using PracaDyplomowa.Interface;
 using PracaDyplomowa.ViewsModel;
 using MailKit.Net.Smtp;
 using MimeKit;
+using System.Net.Mail;
+using System.ComponentModel;
 
 //using System.Net;
 //using System.Net.Mail;
@@ -128,25 +130,25 @@ namespace PracaDyplomowa.Controllers
 
 
         static bool mailSent = false;
-        //private static void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
-        //{
-        //    // Get the unique identifier for this asynchronous operation.
-        //    String token = (string)e.UserState;
+        private static void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
+        {
+            // Get the unique identifier for this asynchronous operation.
+            String token = (string)e.UserState;
 
-        //    if (e.Cancelled)
-        //    {
-        //        Console.WriteLine("[{0}] Send canceled.", token);
-        //    }
-        //    if (e.Error != null)
-        //    {
-        //        Console.WriteLine("[{0}] {1}", token, e.Error.ToString());
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("Message sent.");
-        //    }
-        //    mailSent = true;
-        //}
+            if (e.Cancelled)
+            {
+                Console.WriteLine("[{0}] Send canceled.", token);
+            }
+            if (e.Error != null)
+            {
+                Console.WriteLine("[{0}] {1}", token, e.Error.ToString());
+            }
+            else
+            {
+                Console.WriteLine("Message sent.");
+            }
+            mailSent = true;
+        }
         public IActionResult SenndEmail(string email)
         {
             MimeMessage message = new MimeMessage();
@@ -166,7 +168,7 @@ namespace PracaDyplomowa.Controllers
             bodyBuilder.TextBody = "Hello World!";
             message.Body = bodyBuilder.ToMessageBody();
 
-            SmtpClient client = new SmtpClient();
+            MailKit.Net.Smtp.SmtpClient client = new MailKit.Net.Smtp.SmtpClient();
             // client.Connect("smtp.wp.pl", 465, false);
             //client.Authenticate("kar.mateusz@wp.pl", "KAMI21`kami");
             client.Connect("smtp.gmail.com", 465);
@@ -213,6 +215,52 @@ namespace PracaDyplomowa.Controllers
             //// Clean up.
             //message.Dispose();
             //Console.WriteLine("Goodbye.");
+
+            return RedirectToAction("index","Home");
+        }
+    
+    public IActionResult SenndEmail2(string email)
+        {
+
+
+            //Command - line argument must be the SMTP host.
+            System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient("smtp.wp.pl", 465);
+            // Specify the email sender.
+            // Create a mailing address that includes a UTF8 character
+            // in the display name.
+            MailAddress from = new MailAddress("kar.mateusz@wp.pl",
+               "KAMI21`kami",
+            System.Text.Encoding.UTF8);
+            // Set destinations for the email message.
+            MailAddress to = new MailAddress("kar.mateusz@wp.pl");
+            // Specify the message content.
+            MailMessage message = new MailMessage(from, to);
+            message.Body = "This is a test email message sent by an application. ";
+            // Include some non-ASCII characters in body and subject.
+            string someArrows = new string(new char[] { '\u2190', '\u2191', '\u2192', '\u2193' });
+            message.Body += Environment.NewLine + someArrows;
+            message.BodyEncoding = System.Text.Encoding.UTF8;
+            message.Subject = "test message 1" + someArrows;
+            message.SubjectEncoding = System.Text.Encoding.UTF8;
+            // Set the method that is called back when the send operation ends.
+            client.SendCompleted += new
+            SendCompletedEventHandler(SendCompletedCallback);
+            // The userState can be any object that allows your callback
+            // method to identify this send operation.
+            // For this example, the userToken is a string constant.
+            string userState = "test message1";
+            client.SendAsync(message, userState);
+            //Console.WriteLine("Sending message... press c to cancel mail. Press any other key to exit.");
+            //string answer = Console.ReadLine();
+            // If the user canceled the send, and mail hasn't been sent yet,
+            // then cancel the pending operation.
+            //if (answer.StartsWith("c") && mailSent == false)
+            //{
+            //    client.SendAsyncCancel();
+            //}
+            // Clean up.
+            message.Dispose();
+            Console.WriteLine("Goodbye.");
 
             return RedirectToAction("index","Home");
         }

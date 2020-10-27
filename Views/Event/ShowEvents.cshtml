@@ -1,18 +1,60 @@
-﻿@model PracaDyplomowa.ViewsModel.EventsListVM
+@model PracaDyplomowa.ViewsModel.EventsListVM
+<div class="container">
+    <button type="button" class="btn btn-info btn-danger" data-toggle="collapse" data-target="#demo">Wyszukaj/Sortuj</button>
+    <div id="demo" class="collapse">
+        <div class="col-sm-6">
+            <form method="post" asp-action="SearchEvents">
+                <div class="form-group">
+                    <label class="col-form-label" asp-for="searchName">Nazwa</label>
+                    <div class="">
+                        <input class="form-control" asp-for="searchName" placeholder="Nazwa" />
+                    </div>
+                </div>
 
+                <div class="form-group">
 
+                    <label class="col-form-label" asp-for="searcDateStart">Rozpoczęte przed</label>
+                    <div class="">
+                        <input class="form-control" asp-for="searcDateStart" type="date" value="@DateTime.Today" />
+                        <input class="form-control" asp-for="sortByDS" type="checkbox" value="true" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-form-label" asp-for="searcDateEnd">Zakończone do</label>
+                    <div class="">
+                        <input class="form-control" asp-for="searcDateEnd" type="date" value="@DateTime.Today" />
+                        <input class="form-control" asp-for="sortByDE" type="checkbox" value="true" />
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-form-label" asp-for="typeSort">Typ sortowania</label>
+                    <div class="text-center">
+                        <label class="col-form-label" asp-for="typeSort">Malejąco</label>
+                        <input class="form-control" asp-for="typeSort" type="radio" value="Down" />
+                        <label class="col-form-label" asp-for="typeSort">Rosnąco</label>
+                        <input class="form-control" asp-for="typeSort" type="radio" value="Up" />
+                    </div>
+                </div>
+                <input type="submit" class="" value="Szukaj" />
+            </form>
+        </div>
+    </div>
+</div>
 @foreach (var e in Model.eventList)
 {
-   
-    <div class="col-sm-6 col-lg-4">
 
-        <h3>@e.EventId</h3>
-        <h3>@e.Name</h3>
-        <h3>@e.ShortDescription</h3>
-        <h3>@e.Description</h3>
-        <h3>@e.Place</h3>
-        <h3>@e.DateStart</h3>
-        <h3>@e.DateEnd</h3>
+
+    <div class="row">
+        <div class="col-12 text-center" id="EventName"><h2>@e.Name</h2></div>
+    </div>
+    <div class="col-lg-6 col-lg-4">
+        <h3>Numer: @e.EventId</h3>
+        <h3>Krótki opis: @e.ShortDescription</h3>
+        <h3>Opis: @e.Description</h3>
+        <h3>Miejsce: @e.Place</h3>
+        <h3>Data rozpoczęcia: @e.DateStart</h3>
+        <h3>Data zakończenia: @e.DateEnd</h3>
 
         <form asp-action="DetailsEvent" asp-controller="Event" method="post">
             <div class="form-group d-none">
@@ -21,37 +63,6 @@
             <input type="submit" class="btn btn-primary" value="Szczegóły" />
         </form>
     </div>
-    
+
 
 }
-<form method="post" asp-action="SearchEvents">
-    <div class="form-group">
-        <label class="col-form-label" asp-for="searchName">Nazwa</label>
-        <div class="">
-            <input class="form-control" asp-for="searchName" />
-        </div>
-    </div>
-
-    <div class="form-group">
-        <input class="form-control" asp-for="sortByDS" type="checkbox" value="true" />
-        <label class="col-form-label" asp-for="searcDateStart">Rozpoczęte przed</label>
-        <div class="">
-            <input class="form-control" asp-for="searcDateStart" type="date" value="@DateTime.Today" />
-        </div>
-    </div>
-    <div class="form-group">
-        <input class="form-control" asp-for="sortByDE" type="checkbox" value="true" />
-        <label class="col-form-label" asp-for="searcDateEnd">Zakończone do</label>
-        <div class="">
-            <input class="form-control" asp-for="searcDateEnd" type="date" value="@DateTime.Today"/>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-form-label" asp-for="typeSort">Typ sortowania</label>
-        <div class="">
-            <input class="form-control" asp-for="typeSort" type="radio" value="Down" /> <label class="col-form-label" asp-for="typeSort">Malejąco</label>
-            <input class="form-control" asp-for="typeSort" type="radio" value="Up" /> <label class="col-form-label" asp-for="typeSort">Rosnąco</label>
-        </div>
-    </div>
-    <input type="submit" class="" value="Szukaj" />
-</form>
