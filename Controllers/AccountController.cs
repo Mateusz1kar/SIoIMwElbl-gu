@@ -153,12 +153,12 @@ namespace PracaDyplomowa.Controllers
         {
             MimeMessage message = new MimeMessage();
 
-            MailboxAddress from = new MailboxAddress("Admin",
-            "kar.mateusz@wp.pl");
+            MailboxAddress from = new MailboxAddress("kar.matgogle",
+            "kar.matgogle@gmail.com");
             message.From.Add(from);
 
-            MailboxAddress to = new MailboxAddress("User",
-             "kar.mateusz@wp.pl");
+            MailboxAddress to = new MailboxAddress("kar.matgogle",
+             "kar.matgogle@gmail.com");
             message.To.Add(to);
 
             message.Subject = "This is email subject";
@@ -172,7 +172,7 @@ namespace PracaDyplomowa.Controllers
             // client.Connect("smtp.wp.pl", 465, false);
             //client.Authenticate("kar.mateusz@wp.pl", "KAMI21`kami");
             client.Connect("smtp.gmail.com", 465);
-            client.Authenticate("kar.matgogle", "NieUrzGmail@");
+            client.Authenticate("kar.matgogle@gmail.com", "NieUrzGmail@");
             client.Send(message);
             client.Disconnect(true);
             client.Dispose();
@@ -260,10 +260,54 @@ namespace PracaDyplomowa.Controllers
             //}
             // Clean up.
             message.Dispose();
-            Console.WriteLine("Goodbye.");
+        
 
             return RedirectToAction("index","Home");
         }
+        public IActionResult SenndEmail3(string email)
+        {
+            System.Net.Mail.SmtpClient smtpClient = new System.Net.Mail.SmtpClient("smtp.wp.pl", 25);
+
+            smtpClient.Credentials = new System.Net.NetworkCredential("kar.mateusz@wp.pl", "KAMI21`kami");
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+            MailMessage mailMessage = new MailMessage("kar.mateusz@wp.pl", "kar.mateusz@wp.pl");
+            mailMessage.Subject = "test";
+            mailMessage.Body = "please";
+
+            try
+            {
+                smtpClient.Send(mailMessage);
+
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("index", "Home");
+            }
+            return RedirectToAction("index", "Home");
+        }
+
+        public IActionResult SenndEmail4(string email)
+        {
+            using (MailMessage mail = new MailMessage())
+            {
+                mail.From = new MailAddress("kar.matgogle@gmail.com");
+                mail.To.Add("kar.matgogle@gmail.com");
+                mail.Subject = "Test send";
+                mail.Body = "<h1>Test</h1>";
+                mail.IsBodyHtml = true;
+                using (System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.Credentials = new System.Net.NetworkCredential("kar.matgogle@gmail.com", "NieUrzGmail@");
+                    smtp.EnableSsl = true;
+                    smtp.Send(mail);
+                    
+                }
+            }
+
+            return RedirectToAction("index", "Home");
+        }
     }
+   
 }
 
