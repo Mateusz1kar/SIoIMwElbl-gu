@@ -15,5 +15,6 @@ namespace PracaDyplomowa.ViewsModel
         [Display(Name = "Hasło")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+        public string error { get; set; }
     }
 }

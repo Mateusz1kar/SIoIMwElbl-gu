@@ -13,5 +13,7 @@ namespace PracaDyplomowa.Interface
         void updateFirmAccount(string userName,string firmName, string firmDescription);
         FirmAccount getFirmAccount(string userName);
         List<FirmAccount> getAllFirmAccount();
+        void setConfirmatioCode(string userName, string confirmatioCode);
+        void setComfirmed(string userName, bool bomfirmed);
     }
 }

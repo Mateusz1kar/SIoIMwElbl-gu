@@ -36,7 +36,9 @@ namespace PracaDyplomowa
             services.AddTransient<IImageRepozytory, ImageRepozytory>();
             services.AddControllersWithViews();
             //autoryzacja urzytkownika
-            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
+         
 
         }
 

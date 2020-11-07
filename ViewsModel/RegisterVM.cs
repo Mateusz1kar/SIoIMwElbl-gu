@@ -14,10 +14,16 @@ namespace PracaDyplomowa.ViewsModel
         [Required]
         [Display(Name = "Hasło")]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Password { get; set; } 
+        public string PasswordRepeat { get; set; }
         [Required]
         [Display(Name = "Nazwa firmy")]
         public string FirmName { get; set; }
         public string FirmDescriotion { get; set; }
+        public string ConfirmatioCode { get; set; }
+        public bool Comfirmed { get; set; }
+        [Required]
+        public string Email { get; set; }
+        public string error { get; set; }
     }
 }

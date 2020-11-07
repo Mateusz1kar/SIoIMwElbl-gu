@@ -1,0 +1,168 @@
+﻿@model PracaDyplomowa.ViewsModel.RegisterVM
+
+<div class="row">
+
+    <div class="col-md-4">
+        <button class="btn btn-primary m-1 w-100 text-center" onclick="displayActivationForm()">akywacja konta </button>
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-primary m-1 w-100 text-center" onclick="displayubResetForm()"> Reset chasła</button>
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-primary m-1 w-100 text-center" onclick="displaySendCodeForm()">wysłanie kodu aktywacyjnego/resetu chasła</button>
+    </div>
+
+</div>
+<script>
+
+    function displayActivationForm() {
+        var element = document.getElementById("activationForm");
+        if (element.classList) {
+            element.classList.toggle("d-none");
+        } else {
+            var classes = element.className.split(" ");
+            var i = classes.indexOf("d-none");
+            if (i >= 0)
+                classes.splice(i, 1);
+            else
+                classes.push("d-none");
+            element.className = classes.join(" ");
+        }
+    }
+    function displayubResetForm() {
+        var element = document.getElementById("resetForm");
+        if (element.classList) {
+            element.classList.toggle("d-none");
+        } else {
+            var classes = element.className.split(" ");
+            var i = classes.indexOf("d-none");
+            if (i >= 0)
+                classes.splice(i, 1);
+            else
+                classes.push("d-none");
+            element.className = classes.join(" ");
+        }
+    }
+    function displaySendCodeForm() {
+        var element = document.getElementById("sendCodeForm");
+        if (element.classList) {
+            element.classList.toggle("d-none");
+        } else {
+            var classes = element.className.split(" ");
+            var i = classes.indexOf("d-none");
+            if (i >= 0)
+                classes.splice(i, 1);
+            else
+                classes.push("d-none");
+            element.className = classes.join(" ");
+        }
+    }
+    
+</script>
+<div class="row m-1 d-none" id="activationForm">
+    <div class="col-12 text-center border m-auto m-1">
+        akywacja konta
+        <form enctype="multipart/form-data" asp-action="ActivateAccount" asp-controller="Account" method="post" class="form-horizontal login" role="form">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+
+                <input type="text" asp-for="UserName" class="form-control" id="UserName" placeholder="Login">
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="text" asp-for="FirmName" class="form-control" id="UserName" placeholder="Nazwa firmy">
+                <span asp-validation-for="FirmName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="password" asp-for="Password" class="form-control" id="Password" placeholder="Hasło">
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="text" asp-for="Email" class="form-control" id="UserName" placeholder="Email">
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="text" asp-for="ConfirmatioCode" class="form-control" id="FirmName" placeholder="KodActywacyjny">
+                <span asp-validation-for="ConfirmatioCode" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Aktyuj</button>
+        </form>
+    </div>
+</div>
+<div class="row m-1 d-none" id="resetForm">
+    <div class="col-12 text-center border m-auto m-1">
+        Reset chasła
+        <form enctype="multipart/form-data" asp-action="ForgetPasswort" asp-controller="Account" method="post" class="form-horizontal login" role="form">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+
+                <input type="text" asp-for="UserName" class="form-control" id="UserName" placeholder="Login">
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="text" asp-for="FirmName" class="form-control" id="UserName" placeholder="Nazwa firmy">
+                <span asp-validation-for="FirmName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="password" asp-for="Password" class="form-control" id="Password1" placeholder="Hasło">
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="password" asp-for="PasswordRepeat" class="form-control" id="Password2" placeholder="Powtórz hasło ">
+                <span asp-validation-for="PasswordRepeat" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="text" asp-for="Email" class="form-control" id="UserName" placeholder="Email">
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="text" asp-for="ConfirmatioCode" class="form-control" id="FirmName" placeholder="KodActywacyjny">
+                <span asp-validation-for="ConfirmatioCode" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Aktyuj</button>
+        </form>
+    </div>
+</div>
+<div class="row m-1 d-none " id="sendCodeForm">
+    <div class="col-12 text-center border m-auto m-1">
+        wysłanie kodu aktywacyjnego/resetu chasła
+        <form enctype="multipart/form-data" asp-action="SenndAccountConfirmEmail" asp-controller="Account" method="post" class="form-horizontal login" role="form">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+
+                <input type="text" asp-for="Email" class="form-control" id="Email" placeholder="Email">
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="text" asp-for="UserName" class="form-control" id="UserName" placeholder="Login">
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="text" asp-for="FirmName" class="form-control" id="UserName" placeholder="Nazwa firmy">
+                <span asp-validation-for="FirmName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <input type="text" asp-for="ConfirmatioCode" class="form-control" id="FirmName" placeholder="KodActywacyjny">
+                <span asp-validation-for="ConfirmatioCode" class="text-danger"></span>
+            </div>
+
+
+
+            <button type="submit" class="btn btn-primary">Wyślij kod aktywacyjny</button>
+        </form>
+    </div>
+</div>
+
+    
