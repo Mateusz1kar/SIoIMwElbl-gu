@@ -38,6 +38,20 @@ namespace PracaDyplomowa.Repozytory
 
         }
 
+        public void setComfirmed(string userName, bool comfirmed)
+        {
+            FirmAccount firmAccount = getFirmAccount(userName);
+            firmAccount.Comfirmed = comfirmed;
+            _appDbContext.SaveChanges();
+        }
+
+        public void setConfirmatioCode(string userName, string confirmatioCode)
+        {
+            FirmAccount firmAccount = getFirmAccount(userName);
+            firmAccount.ConfirmatioCode = confirmatioCode;
+            _appDbContext.SaveChanges();
+        }
+
         public void updateFirmAccount(string userName,string firmName, string firmDescription)
         {
             var firmAccount = getFirmAccount(userName);

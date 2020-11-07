@@ -10,6 +10,8 @@ namespace PracaDyplomowa.Models
         public string UserName { get; set; }
         public string FirmName { get; set; }
         public string FirmDescriotion { get; set; }
+        public string ConfirmatioCode { get; set; }
+        public bool Comfirmed { get; set; }
         public List<Token> Tokens { get; set; }
         public List<Event> Events { get; set; }
 

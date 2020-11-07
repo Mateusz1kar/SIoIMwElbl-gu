@@ -39,7 +39,7 @@ namespace PracaDyplomowa.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Login(LoginVM loginvm)
+        public async Task<IActionResult> Login(LoginVM loginvm, string error = "")
         {
             if (!ModelState.IsValid)
                 return View(loginvm);
@@ -48,6 +48,12 @@ namespace PracaDyplomowa.Controllers
 
             if (user != null)
             {
+                var buf = _firmAccountRepozytory.getFirmAccount(loginvm.UserName);
+                if (!buf.Comfirmed)
+                {
+                    loginvm.error = "Konot nie zostało aktywowane";
+                    return View(loginvm);
+                }
                 var result = await _signInManager.PasswordSignInAsync(user, loginvm.Password, false, false);
                 if (result.Succeeded)
                 {
@@ -58,30 +64,108 @@ namespace PracaDyplomowa.Controllers
             return View(loginvm);
         }
 
+        public IActionResult ActivateAccount()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ActivateAccount(RegisterVM model, string error = "")
+        {
+            
+
+            var user = await _userManager.FindByNameAsync(model.UserName);
+
+            if (user != null)
+            {
+                var buf = _firmAccountRepozytory.getFirmAccount(model.UserName);
+                if (buf.ConfirmatioCode==model.ConfirmatioCode && buf.FirmName == model.FirmName)
+                {
+                    var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, false);
+                    if (result.Succeeded)
+                    {
+                        _firmAccountRepozytory.setComfirmed(user.UserName, true);
+                        _firmAccountRepozytory.setConfirmatioCode(user.UserName, "");
+                        return RedirectToAction("AccountPanel");
+                    }
+                }
+               
+            }
+            //ModelState.AddModelError("", "Niepoprawna nazwa użytkownika lub hasło");
+            return View(model);
+        } 
+        public async Task<IActionResult> ForgetPasswort(RegisterVM model, string error = "")
+        {
+            if (model.Password!=model.PasswordRepeat && model.Password!="")
+            {
+                model.error = "Hasła nie są takie same";
+                return View("ActivateAccount", model);
+            }
+            var user = await _userManager.FindByNameAsync(model.UserName);
+
+            if (user != null)
+            {
+
+                
+                var buf = _firmAccountRepozytory.getFirmAccount(model.UserName);
+                if (buf.ConfirmatioCode==model.ConfirmatioCode )//&& buf.FirmName==model.FirmName)
+                {
+
+                  
+                        var resultChangePassword = await _userManager.ResetPasswordAsync(user, model.ConfirmatioCode, model.Password);
+                        if (resultChangePassword.Succeeded)
+                        {
+                            _firmAccountRepozytory.setComfirmed(user.UserName, true);
+                            _firmAccountRepozytory.setConfirmatioCode(user.UserName, "");
+                            return RedirectToAction("Login");
+                         }
+                        else
+                        {
+                             model.error = "Błąd resetu hasła";
+                        }
+                      
+                        return RedirectToAction("ForgetPasswort", model);
+                    
+                }
+                else
+                {
+                    model.error = "Błędne dane";
+                }
+               
+            }
+            //ModelState.AddModelError("", "Niepoprawna nazwa użytkownika lub hasło");
+            return View(model);
+        }
+
         // GET: /<controller>/
-        public IActionResult Register()
+        public IActionResult Register(string error = "")
         {
             return View(new RegisterVM());
         }
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterVM registerVM)
+        public async Task<IActionResult> Register(RegisterVM registerVM, string error = "")
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser() { UserName = registerVM.UserName };
+                
+                var random = new Random();
+                var user = new IdentityUser() { UserName = registerVM.UserName , Email=registerVM.Email};
                 var result = await _userManager.CreateAsync(user, registerVM.Password);
                 if (result.Succeeded)
                 {
+                    var code = _userManager.GeneratePasswordResetTokenAsync(user).ToString();
                     FirmAccount newFirmAccount = new FirmAccount()
                     {
                         FirmDescriotion = registerVM.FirmDescriotion,
                         FirmName = registerVM.FirmName,
                         Events = new List<Event>(),
                         Tokens = new List<Token>(),
-                        UserName = user.UserName
+                        UserName = user.UserName,
+                        Comfirmed = false,
+                        ConfirmatioCode = code
                     };
                     _firmAccountRepozytory.addFirmAccout(newFirmAccount);
-                    return RedirectToAction("Index", "Home");
+
+                    return RedirectToAction("SenndAccountConfirmEmail",registerVM);
                 }
             }
 
@@ -90,7 +174,7 @@ namespace PracaDyplomowa.Controllers
         }
 
 
-        public async Task<IActionResult> LogOut()
+        public async Task<IActionResult> LogOut( string error = "")
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
@@ -124,146 +208,42 @@ namespace PracaDyplomowa.Controllers
             return RedirectToAction("AccountPanel");
         }
 
-
-
-
-
-
-        static bool mailSent = false;
-        private static void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
+   
+        public async Task<IActionResult> SenndAccountConfirmEmail(RegisterVM model)
         {
-            // Get the unique identifier for this asynchronous operation.
-            String token = (string)e.UserState;
+           
 
-            if (e.Cancelled)
+            var user = await _userManager.FindByNameAsync(model.UserName);
+
+            if (user != null && user.Email==model.Email)
             {
-                Console.WriteLine("[{0}] Send canceled.", token);
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var firm = _firmAccountRepozytory.getFirmAccount(model.UserName);
+                Random random = new Random();
+                _firmAccountRepozytory.setComfirmed(user.UserName, false);
+                _firmAccountRepozytory.setConfirmatioCode(user.UserName, code);
+                using (MailMessage mail = new MailMessage())
+                {
+                    mail.From = new MailAddress("kar.matgogle@gmail.com");
+                    mail.To.Add(user.Email);
+                    mail.Subject = "Kod aktywacyjny";
+                    mail.Body = "<h1>"+ firm.ConfirmatioCode+"</h1>";
+                    mail.IsBodyHtml = true;
+
+                    _firmAccountRepozytory.setComfirmed(model.UserName, false);
+                    using (System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587))
+                    {
+                        smtp.Credentials = new System.Net.NetworkCredential("kar.matgogle@gmail.com", "NieUrzGmail@");
+                        smtp.EnableSsl = true;
+                        smtp.Send(mail);
+
+                    }
+                }
             }
-            if (e.Error != null)
-            {
-                Console.WriteLine("[{0}] {1}", token, e.Error.ToString());
-            }
-            else
-            {
-                Console.WriteLine("Message sent.");
-            }
-            mailSent = true;
-        }
-        public IActionResult SenndEmail(string email)
-        {
-            MimeMessage message = new MimeMessage();
 
-            MailboxAddress from = new MailboxAddress("Admin",
-            "kar.mateusz@wp.pl");
-            message.From.Add(from);
-
-            MailboxAddress to = new MailboxAddress("User",
-             "kar.mateusz@wp.pl");
-            message.To.Add(to);
-
-            message.Subject = "This is email subject";
-
-            BodyBuilder bodyBuilder = new BodyBuilder();
-            bodyBuilder.HtmlBody = "<h1>Hello World!</h1>";
-            bodyBuilder.TextBody = "Hello World!";
-            message.Body = bodyBuilder.ToMessageBody();
-
-            MailKit.Net.Smtp.SmtpClient client = new MailKit.Net.Smtp.SmtpClient();
-            // client.Connect("smtp.wp.pl", 465, false);
-            //client.Authenticate("kar.mateusz@wp.pl", "KAMI21`kami");
-            client.Connect("smtp.gmail.com", 465);
-            client.Authenticate("kar.matgogle", "NieUrzGmail@");
-            client.Send(message);
-            client.Disconnect(true);
-            client.Dispose();
-
-            // Command-line argument must be the SMTP host.
-            //SmtpClient client = new SmtpClient("smtp.wp.pl", 465);
-            //// Specify the email sender.
-            //// Create a mailing address that includes a UTF8 character
-            //// in the display name.
-            //MailAddress from = new MailAddress("kar.mateusz@wp.pl",
-            //   "KAMI21`kami",
-            //System.Text.Encoding.UTF8);
-            //// Set destinations for the email message.
-            //MailAddress to = new MailAddress("kar.mateusz@wp.pl");
-            //// Specify the message content.
-            //MailMessage message = new MailMessage(from, to);
-            //message.Body = "This is a test email message sent by an application. ";
-            //// Include some non-ASCII characters in body and subject.
-            //string someArrows = new string(new char[] { '\u2190', '\u2191', '\u2192', '\u2193' });
-            //message.Body += Environment.NewLine + someArrows;
-            //message.BodyEncoding = System.Text.Encoding.UTF8;
-            //message.Subject = "test message 1" + someArrows;
-            //message.SubjectEncoding = System.Text.Encoding.UTF8;
-            //// Set the method that is called back when the send operation ends.
-            //client.SendCompleted += new
-            //SendCompletedEventHandler(SendCompletedCallback);
-            //// The userState can be any object that allows your callback
-            //// method to identify this send operation.
-            //// For this example, the userToken is a string constant.
-            //string userState = "test message1";
-            //client.SendAsync(message, userState);
-            ////Console.WriteLine("Sending message... press c to cancel mail. Press any other key to exit.");
-            ////string answer = Console.ReadLine();
-            //// If the user canceled the send, and mail hasn't been sent yet,
-            //// then cancel the pending operation.
-            ////if (answer.StartsWith("c") && mailSent == false)
-            ////{
-            ////    client.SendAsyncCancel();
-            ////}
-            //// Clean up.
-            //message.Dispose();
-            //Console.WriteLine("Goodbye.");
-
-            return RedirectToAction("index","Home");
-        }
-    
-    public IActionResult SenndEmail2(string email)
-        {
-
-
-            //Command - line argument must be the SMTP host.
-            System.Net.Mail.SmtpClient client = new System.Net.Mail.SmtpClient("smtp.wp.pl", 465);
-            // Specify the email sender.
-            // Create a mailing address that includes a UTF8 character
-            // in the display name.
-            MailAddress from = new MailAddress("kar.mateusz@wp.pl",
-               "KAMI21`kami",
-            System.Text.Encoding.UTF8);
-            // Set destinations for the email message.
-            MailAddress to = new MailAddress("kar.mateusz@wp.pl");
-            // Specify the message content.
-            MailMessage message = new MailMessage(from, to);
-            message.Body = "This is a test email message sent by an application. ";
-            // Include some non-ASCII characters in body and subject.
-            string someArrows = new string(new char[] { '\u2190', '\u2191', '\u2192', '\u2193' });
-            message.Body += Environment.NewLine + someArrows;
-            message.BodyEncoding = System.Text.Encoding.UTF8;
-            message.Subject = "test message 1" + someArrows;
-            message.SubjectEncoding = System.Text.Encoding.UTF8;
-            // Set the method that is called back when the send operation ends.
-            client.SendCompleted += new
-            SendCompletedEventHandler(SendCompletedCallback);
-            // The userState can be any object that allows your callback
-            // method to identify this send operation.
-            // For this example, the userToken is a string constant.
-            string userState = "test message1";
-            client.SendAsync(message, userState);
-            //Console.WriteLine("Sending message... press c to cancel mail. Press any other key to exit.");
-            //string answer = Console.ReadLine();
-            // If the user canceled the send, and mail hasn't been sent yet,
-            // then cancel the pending operation.
-            //if (answer.StartsWith("c") && mailSent == false)
-            //{
-            //    client.SendAsyncCancel();
-            //}
-            // Clean up.
-            message.Dispose();
-            Console.WriteLine("Goodbye.");
-
-            return RedirectToAction("index","Home");
+            return RedirectToAction("ActivateAccount");
         }
     }
+   
 }
 

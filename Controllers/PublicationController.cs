@@ -64,12 +64,18 @@ namespace PracaDyplomowa.Controllers
             List<EventImages> imageList = _imageRepozytory.findEventImages(model.id);
             if (imageList.Count>0)
             {
-                string image = Path.Combine(hostingEnvironment.WebRootPath, "Images\\EventImages\\" + imageList[0].ImageName);
+                //string image = Path.Combine(hostingEnvironment.WebRootPath, "Images/EventImages/" + imageList[0].ImageName);
+              
+                //string image2 = Path.Combine("~/Images/EventImages/", "Images/EventImages/" + imageList[0].ImageName);
+                string image3 = Path.Combine("https://sioimwelblągu.azurewebsites.net/Images/EventImages/" , imageList[0].ImageName);
+
                 //string imgeUrl = "https://localhost:44378/" + "Images/kotek.jpg";
                 //string img = "https://dziendobry.tvn.pl/media/cache/content_cover/imie-dla-kotki-jak-wybrac-oryginalne-imie-i-dobrze-dopasowac-je-do-kotki-jpg.jpg";
                 //string img2 = "https://i.ytimg.com/vi/S4UCxJK27D8/hqdefault.jpg";
                 //List<string> imgList = new List<string>() { img, img2 };
-                var result = facebook.PublishToFacebook(model.PublicationText, image);
+                //var result = facebook.PublishToFacebook("image1", image); 
+                //var result2 = facebook.PublishToFacebook("image2", image2); 
+                var result3 = facebook.PublishToFacebook(model.PublicationText, image3);
 
             }
             else

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PracaDyplomowa.Models;
 
 namespace PracaDyplomowa.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201101162907_addEmailComfirdFilds")]
+    partial class addEmailComfirdFilds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,8 +285,8 @@ namespace PracaDyplomowa.Migrations
                     b.Property<bool>("Comfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ConfirmatioCode")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ConfirmatioCode")
+                        .HasColumnType("int");
 
                     b.Property<string>("FirmDescriotion")
                         .HasColumnType("nvarchar(max)");
