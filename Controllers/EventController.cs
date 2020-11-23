@@ -33,16 +33,25 @@ namespace PracaDyplomowa.Controllers
         [HttpPost]
         public IActionResult AddEvent(AddEventVM model)
         {
-            if (ModelState.IsValid & User.Identity.IsAuthenticated)
+            if (model.DateStart == null)
             {
+                ModelState.AddModelError("", "Prosze wprowadzić datę rozpoczęcia ");
+            }
+            if (model.DateEnd == null)
+            {
+                ModelState.AddModelError("", "Prosze wprowadzić datę zakończenia ");
+            }
+            if (ModelState.IsValid & User.Identity.IsAuthenticated & model.DateEnd != null & model.DateStart == null)
+            {
+                
                 Event e = new Event
                 {
                     Name = model.Name,
                     ShortDescription = model.ShortDescription,
                     Description = model.Description,
                     Place = model.Place,
-                    DateStart = model.DateStart,
-                    DateEnd = model.DateEnd,
+                    DateStart = model.DateStart.Value,
+                    DateEnd = model.DateEnd.Value,
                      UserName=User.Identity.Name,
                       Publications = new List<Publication>()
                 };
@@ -68,9 +77,16 @@ namespace PracaDyplomowa.Controllers
         //[HttpGet("[action]/{id}")]
         public IActionResult DetailsEvent(int id,string error="")
         {
-            Event e = _eventRepozytory.findEvent(id);
-            var model = new DetailsEventVM() { eventDetail = e, error=error , Tokens=_tokenRepozytory.getAll()};
-            return View(model);
+            if (error!="")
+            {
+                ModelState.AddModelError("", error);
+            }
+            
+                Event e = _eventRepozytory.findEvent(id);
+                var model = new DetailsEventVM() { eventDetail = e, error = error, Tokens = _tokenRepozytory.getAll() };
+                return View(model);
+            
+            return RedirectToAction("ShowEvents");
         }
         public IActionResult UpdateEvent(DetailsEventVM model)
         {
@@ -82,8 +98,19 @@ namespace PracaDyplomowa.Controllers
             //e.Description = model.evemtDetail.Description;
             //e.DateStart = model.evemtDetail.DateStart;
             //e.DateEnd = model.evemtDetail.DateEnd;
-            _eventRepozytory.update(model.eventDetail);
-
+            if (ModelState.IsValid & User.Identity.IsAuthenticated)
+            {
+                var buf = _eventRepozytory.findEvent(model.eventDetail.EventId);
+                if (buf.UserName==User.Identity.Name)
+                {
+                    _eventRepozytory.update(model.eventDetail);
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Brak uprwinień ");
+                }
+                
+            }
            
             return RedirectToAction("DetailsEvent", new {id= model.eventDetail.EventId});
         }

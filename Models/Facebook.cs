@@ -129,24 +129,28 @@ namespace PracaDyplomowa.Models
         //        {
         //            using (var http = new HttpClient())
         //            {
-                        
-        //                return await UploadPhoto(pictureURL);
+
+        //                return await UploadPhotoList(pictureURL);
         //            }
         //        });
-        //        var rezImageJson = JObject.Parse(rezImage.Result.Item2);
-
-        //        if (rezImage.Result.Item1 != 200)
+        //        var rezImageJson = JObject.Parse(rezImage.Result[0].Item2);
+        //        for (int i = 1; i < rezImage.Result.Count(); i++)
         //        {
-        //            try // return error from JSON
-        //            {
-        //                return $"Error uploading photo to Facebook. {rezImageJson["error"]["message"].Value<string>()}";
-        //            }
-        //            catch (Exception ex) // return unknown error
-        //            {
-        //                // log exception somewhere
-        //                return $"Unknown error uploading photo to Facebook. {ex.Message}";
-        //            }
+        //            rezImageJson.Add( JObject.Parse(rezImage.Result[i].Item2));
         //        }
+
+        //        //if (rezImage.Result.Item1 != 200)
+        //        //{
+        //        //    try // return error from JSON
+        //        //    {
+        //        //        return $"Error uploading photo to Facebook. {rezImageJson["error"]["message"].Value<string>()}";
+        //        //    }
+        //        //    catch (Exception ex) // return unknown error
+        //        //    {
+        //        //        // log exception somewhere
+        //        //        return $"Unknown error uploading photo to Facebook. {ex.Message}";
+        //        //    }
+        //        //}
         //        // get post ID from the response
         //        string postID = rezImageJson["post_id"].Value<string>();
 
@@ -181,6 +185,71 @@ namespace PracaDyplomowa.Models
         //        return $"Unknown error publishing post to Facebook. {ex.Message}";
         //    }
         //}
+
+
+        public string PublishImageListToFacebook(string postText, List<string> pictureURL)
+        {
+            try
+            {
+                // upload picture first
+                var rezImage = Task.Run(async () =>
+                {
+                    using (var http = new HttpClient())
+                    {
+
+                        return await UploadPhotoList(pictureURL);
+                    }
+                });
+                var rezImageJson = JObject.Parse(rezImage.Result.Item2);
+
+                if (rezImage.Result.Item1 != 200)
+                {
+                    try // return error from JSON
+                    {
+                        return $"Error uploading photo to Facebook. {rezImageJson["error"]["message"].Value<string>()}";
+                    }
+                    catch (Exception ex) // return unknown error
+                    {
+                        // log exception somewhere
+                        return $"Unknown error uploading photo to Facebook. {ex.Message}";
+                    }
+                }
+                // get post ID from the response
+                string postID = rezImageJson["post_id"].Value<string>();
+
+                // and update this post (which is actually a photo) with your text
+                var rezText = Task.Run(async () =>
+                {
+                    using (var http = new HttpClient())
+                    {
+                        return await UpdatePhotoWithPost(postID, postText);
+                    }
+                });
+                var rezTextJson = JObject.Parse(rezText.Result.Item2);
+
+                if (rezText.Result.Item1 != 200)
+                {
+                    try // return error from JSON
+                    {
+                        return $"Error posting to Facebook. {rezTextJson["error"]["message"].Value<string>()}";
+                    }
+                    catch (Exception ex) // return unknown error
+                    {
+                        // log exception somewhere
+                        return $"Unknown error posting to Facebook. {ex.Message}";
+                    }
+                }
+
+                return "OK";
+            }
+            catch (Exception ex)
+            {
+                // log exception somewhere
+                return $"Unknown error publishing post to Facebook. {ex.Message}";
+            }
+        }
+
+
         /// <summary>
         /// Upload a picture (photo)
         /// </summary>
@@ -209,6 +278,80 @@ namespace PracaDyplomowa.Models
         }
 
         /// <summary>
+        /// Upload a picture (photo)
+        /// </summary>
+        /// <returns>StatusCode and JSON response</returns>
+        /// <param/* name="photoURL*/">URL of the picture to upload</param>
+        ///                                                                                                 tyle postów ile zdjęć
+        //public async Task<List<Tuple<int, string>>> UploadPhotoList(List<string>photoURL)
+        //{
+        //    using (var http = new HttpClient())
+        //    {
+        //        List<string> httpContentList = new List<string>();
+        //        List<int> StatudCodetList = new List<int>();
+        //        List<Tuple<int, string>> tupleList = new List<Tuple<int, string>>();
+        //        for (int i = 0; i < photoURL.Count(); i++)
+        //        {
+        //            var postData = new Dictionary<string, string> {
+        //                { "access_token", _accessToken },
+        //                { "url", photoURL[i] }
+        //            };
+
+        //            var httpResponse = await http.PostAsync(
+        //            _postToPagePhotosURL,
+        //            new FormUrlEncodedContent(postData)
+        //            );
+        //            //httpContentList.Add(await httpResponse.Content.ReadAsStringAsync());
+        //            //StatudCodetList.Add((int)httpResponse.StatusCode);
+        //            var httpContent = await httpResponse.Content.ReadAsStringAsync();
+        //            tupleList.Add(new Tuple<int, string>(
+        //            (int)httpResponse.StatusCode,
+        //                httpContent
+        //            ));
+        //        }
+
+
+        //        return tupleList;
+        //    }
+        //}
+
+        public async Task<Tuple<int, string>> UploadPhotoList(List<string> photoURL)
+        {
+            using (var http = new HttpClient())
+            {
+
+                List<string> httpContentList = new List<string>();
+                List<int> StatudCodetList = new List<int>();
+                var postData = new Dictionary<string, string>();
+                postData.Add("access_token", _accessToken);
+                List<Tuple<int, string>> tupleList = new List<Tuple<int, string>>();
+                postData.Add("url" , photoURL[0]);
+                postData.Add("url2" , photoURL[1]);
+
+                //for (int i = 0; i < photoURL.Count(); i++)
+                //{
+                //    postData.Add("url"+i, photoURL[i]);
+                //    };
+
+
+                var httpResponse = await http.PostAsync(
+                      _postToPagePhotosURL,
+                         new FormUrlEncodedContent(postData)
+                    );;
+                    var httpContent = await httpResponse.Content.ReadAsStringAsync();
+                return new Tuple<int, string>(
+                 (int)httpResponse.StatusCode,
+                 httpContent
+                 );
+
+            }
+
+
+            
+        }
+        
+
+        /// <summary>
         /// Update the uploaded picture (photo) with the given text
         /// </summary>
         /// <returns>StatusCode and JSON response</returns>
@@ -220,8 +363,7 @@ namespace PracaDyplomowa.Models
             {
                 var postData = new Dictionary<string, string> {
                 { "access_token", _accessToken },
-                { "message", postText }//,
-                // { "formatting", "MARKDOWN" } // doesn't work
+                { "message", postText }
             };
 
                 var httpResponse = await http.PostAsync(

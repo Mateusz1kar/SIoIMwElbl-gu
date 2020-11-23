@@ -16,10 +16,12 @@ namespace PracaDyplomowa.Controllers
     {
         private readonly IHostingEnvironment hostingEnvironment;
         private readonly IImageRepozytory _imageRepozytory;
-        public PublicationController(IHostingEnvironment hostingEnvironment, IImageRepozytory imageRepozytory)
+        private readonly ITokenRepozytory _tokenRepozytory;
+        public PublicationController(IHostingEnvironment hostingEnvironment, IImageRepozytory imageRepozytory, ITokenRepozytory tokenRepozytory)
         {
             this.hostingEnvironment = hostingEnvironment;
             _imageRepozytory = imageRepozytory;
+            _tokenRepozytory = tokenRepozytory;
         }
         // GET: /<controller>/
         //public async Task<IActionResult> PublicToFacebook()
@@ -50,6 +52,7 @@ namespace PracaDyplomowa.Controllers
             if (result.Item1 != 200)
             {
                 error = "Wystąpił błąd publikacja nie została wykonana";
+
             }
             return RedirectToAction("DetailsEvent", "Event", new { id = model.id, error = error });
 
@@ -57,31 +60,63 @@ namespace PracaDyplomowa.Controllers
         public async Task<IActionResult> PublicImageToFacebook(DetailsEventVM model)
         {
             var error = "";
-            Facebook facebook = new Facebook(
-                model.PublicationTokenText,
-                model.PublicationPageId
-               );
-            List<EventImages> imageList = _imageRepozytory.findEventImages(model.id);
-            if (imageList.Count>0)
+            if (model.TokenListCheced!=null)
             {
-                //string image = Path.Combine(hostingEnvironment.WebRootPath, "Images/EventImages/" + imageList[0].ImageName);
-              
-                //string image2 = Path.Combine("~/Images/EventImages/", "Images/EventImages/" + imageList[0].ImageName);
-                string image3 = Path.Combine("https://sioimwelblągu.azurewebsites.net/Images/EventImages/" , imageList[0].ImageName);
-
-                //string imgeUrl = "https://localhost:44378/" + "Images/kotek.jpg";
-                //string img = "https://dziendobry.tvn.pl/media/cache/content_cover/imie-dla-kotki-jak-wybrac-oryginalne-imie-i-dobrze-dopasowac-je-do-kotki-jpg.jpg";
-                //string img2 = "https://i.ytimg.com/vi/S4UCxJK27D8/hqdefault.jpg";
-                //List<string> imgList = new List<string>() { img, img2 };
-                //var result = facebook.PublishToFacebook("image1", image); 
-                //var result2 = facebook.PublishToFacebook("image2", image2); 
-                var result3 = facebook.PublishToFacebook(model.PublicationText, image3);
-
+                foreach (var token in model.TokenListCheced)
+                {
+                    var pageId = _tokenRepozytory.getToken(token);
+                    Facebook facebook = new Facebook(
+                    token,
+                    pageId.PageId
+                   );
+                    if (model.PublikationImageName != "")
+                    {
+                        string imageUrl = Path.Combine("https://sioimwelblągu.azurewebsites.net/Images/EventImages/", model.PublikationImageName);
+                        var result = facebook.PublishToFacebook(model.PublicationText, imageUrl);
+                    }
+                    else
+                    {
+                        var result = facebook.PublishSimplePost(model.PublicationText);
+                    }
+                }
             }
             else
             {
-                error = "Brak zdjęć do piblikacji";
+                error= "Publikacja nie udana proszę wybrać strony publikacji";
+                ModelState.AddModelError("", "Publikacja nie udana proszę wybrać strony publikacji ");
             }
+            
+          
+            ////Facebook facebook = new Facebook(
+            ////    model.PublicationTokenText,
+            ////    model.PublicationPageId
+            ////   );
+            //List<EventImages> imageList = _imageRepozytory.findEventImages(model.id);
+            //if (imageList.Count>0)
+            //{
+            //    //string image = Path.Combine(hostingEnvironment.WebRootPath, "Images/EventImages/" + imageList[0].ImageName);
+              
+            //    //string image2 = Path.Combine("~/Images/EventImages/", "Images/EventImages/" + imageList[0].ImageName);
+            //    string image3 = Path.Combine("https://sioimwelblągu.azurewebsites.net/Images/EventImages/" , imageList[0].ImageName);
+            //    List<string> imagUrleList = new List<string>();
+            //    foreach (var item in imageList)
+            //    {
+            //        imagUrleList.Add(Path.Combine("https://sioimwelblągu.azurewebsites.net/Images/EventImages/", item.ImageName));
+            //    }
+            //    //string imgeUrl = "https://localhost:44378/" + "Images/kotek.jpg";
+            //    string img = "https://3.allegroimg.com/s512/03174f/6c5a98b84a3ea2632c2e02949083/PODKLADKA-LAMINOWANA-A2-NA-BIURKO-KOT-KOTKI-KOTEK";
+            //    string img2 = "https://a.allegroimg.com/s512/01c5f0/87e71d8f4d6f9c8f6fbbd404a550/Fototapeta-SLODKI-KOTEK-KOT-10203-XXXL";
+            //    List<string> imgList = new List<string>() { img, img2 };
+            //    //var result = facebook.PublishToFacebook("image1", image); 
+            //    //var result2 = facebook.PublishToFacebook("image2", image2); 
+            //    //var result3 = facebook.PublishToFacebook(model.PublicationText, image3);
+            //    var result3 = facebook.PublishImageListToFacebook(model.PublicationText, imgList);
+
+            //}
+            //else
+            //{
+            //    error = "Brak zdjęć do piblikacji";
+            //}
 
             return RedirectToAction("DetailsEvent", "Event", new { id = model.id, error = error });
 

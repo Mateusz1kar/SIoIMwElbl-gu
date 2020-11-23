@@ -18,5 +18,8 @@ namespace PracaDyplomowa.ViewsModel
         public List<Token> Tokens { get; set; }
         public string PublicationTokenText { get; set; }
         public string PublicationPageId { get; set; }
+        public string PublikationImageName { get; set; }
+        public List<string> TokenListCheced { get; set; }
+
     }
 }

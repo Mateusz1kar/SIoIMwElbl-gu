@@ -21,14 +21,15 @@ namespace PracaDyplomowa.ViewsModel
         [Required(ErrorMessage = "Lokalizacja jest wymagana")]
         [StringLength(200, ErrorMessage = "Miejsce jest za długe")]
         public string Place { get; set; }
-        [Required(ErrorMessage = "Data rozpoczęcia jest wymagana")]
-        [DataType(DataType.DateTime)]
-        public DateTime DateStart { get; set; }
-        [Required(ErrorMessage = "Data zakończenia jest wymagana")]
-        [DataType(DataType.DateTime)]
-        public DateTime DateEnd { get; set; }
+        //[Required(ErrorMessage = "Data rozpoczecia jest wymagana")]
+        [DataType(DataType.DateTime,ErrorMessage = "Proszę podać popraną datę rozpoczecia")]
+        public DateTime? DateStart { get; set; }
+        //[Required(ErrorMessage = "Data zakonczenia jest wymagana")]
+        [DataType(DataType.DateTime, ErrorMessage ="Proszę podać popraną datę zakończenia" )]
+        public DateTime? DateEnd { get; set; }
         public string UserName { get; set; }
         public FirmAccount FirmAccount { get; set; }
         public List<Publication> Publications { get; set; }
+        public string error { get; set; }
     }
 }

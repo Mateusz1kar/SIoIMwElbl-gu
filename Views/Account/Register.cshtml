@@ -1,5 +1,7 @@
 ﻿@model PracaDyplomowa.ViewsModel.RegisterVM
-
+<div class="row text-danger text-center">
+    <h3>@Model.error</h3>
+</div>
 
 
     <form enctype="multipart/form-data" asp-action="Register" asp-controller="Account" method="post" class="form-horizontal login" role="form">

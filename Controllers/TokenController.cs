@@ -38,9 +38,26 @@ namespace PracaDyplomowa.Controllers
                     _tokenRepozytory.addToken(newToken);
                 }
                
-        }
+            }
            
             return RedirectToAction("AccountPanel","Account");
+        }
+        public IActionResult DeleteToken(AccoutVM model)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (_tokenRepozytory.TokenExist(model.DelTokentText))
+                {
+                    Token token = _tokenRepozytory.getToken(model.DelTokentText);
+                    if (token.UserName == User.Identity.Name)
+                    {
+                        _tokenRepozytory.dellToken(model.DelTokentText);
+                    }
+                    
+                }
+
+            }
+            return RedirectToAction("AccountPanel", "Account");
         }
     }
 }

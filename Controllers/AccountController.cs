@@ -36,6 +36,7 @@ namespace PracaDyplomowa.Controllers
         }
         public IActionResult Login()
         {
+           
             return View();
         }
         [HttpPost]
@@ -51,7 +52,8 @@ namespace PracaDyplomowa.Controllers
                 var buf = _firmAccountRepozytory.getFirmAccount(loginvm.UserName);
                 if (!buf.Comfirmed)
                 {
-                    loginvm.error = "Konot nie zostało aktywowane";
+                    ModelState.AddModelError("", "Konot nie zostało aktywowane");
+                    //loginvm.error = "Konot nie zostało aktywowane";
                     return View(loginvm);
                 }
                 var result = await _signInManager.PasswordSignInAsync(user, loginvm.Password, false, false);
@@ -87,17 +89,26 @@ namespace PracaDyplomowa.Controllers
                         _firmAccountRepozytory.setConfirmatioCode(user.UserName, "");
                         return RedirectToAction("AccountPanel");
                     }
+                    else
+                        ModelState.AddModelError("", "Niepoprawne hasło");
                 }
-               
-            }
-            //ModelState.AddModelError("", "Niepoprawna nazwa użytkownika lub hasło");
+                else
+                    ModelState.AddModelError("", "Niepoprwne dane.");
+
+            }else
+                ModelState.AddModelError("", "Niepoprawna nazwa użytkownika lub hasło");
             return View(model);
         } 
         public async Task<IActionResult> ForgetPasswort(RegisterVM model, string error = "")
         {
-            if (model.Password!=model.PasswordRepeat && model.Password!="")
+
+            if (!ModelState.IsValid)
+                return View(model);
+            if (model.Password!=model.PasswordRepeat)
             {
-                model.error = "Hasła nie są takie same";
+                ModelState.AddModelError("", "Hasła nie są takie same");
+                //model.error = "Hasła nie są takie same";
+
                 return View("ActivateAccount", model);
             }
             var user = await _userManager.FindByNameAsync(model.UserName);
@@ -107,7 +118,7 @@ namespace PracaDyplomowa.Controllers
 
                 
                 var buf = _firmAccountRepozytory.getFirmAccount(model.UserName);
-                if (buf.ConfirmatioCode==model.ConfirmatioCode )//&& buf.FirmName==model.FirmName)
+                if (buf.ConfirmatioCode==model.ConfirmatioCode && buf.FirmName==model.FirmName)
                 {
 
                   
@@ -120,7 +131,9 @@ namespace PracaDyplomowa.Controllers
                          }
                         else
                         {
-                             model.error = "Błąd resetu hasła";
+                        ModelState.AddModelError("", "Błędne hasło.\n" +
+                                 "Hasło musi posiadać cojmniej 8 znaków i zawierać dużą i małą literę , liczbę i znak specyjalny");
+                        //model.error = "Błąd resetu hasła";
                         }
                       
                         return RedirectToAction("ForgetPasswort", model);
@@ -128,11 +141,12 @@ namespace PracaDyplomowa.Controllers
                 }
                 else
                 {
-                    model.error = "Błędne dane";
+                    ModelState.AddModelError("", "Podane dane nie są poprawne ");
+                    //model.error = "Błędne dane";
                 }
                
             }
-            //ModelState.AddModelError("", "Niepoprawna nazwa użytkownika lub hasło");
+            ModelState.AddModelError("", "Niepoprawna nazwa użytkownika lub hasło");
             return View(model);
         }
 
@@ -142,31 +156,46 @@ namespace PracaDyplomowa.Controllers
             return View(new RegisterVM());
         }
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterVM registerVM, string error = "")
+        public async Task<IActionResult> Register(RegisterVM registerVM)
         {
             if (ModelState.IsValid)
             {
                 
-                var random = new Random();
-                var user = new IdentityUser() { UserName = registerVM.UserName , Email=registerVM.Email};
-                var result = await _userManager.CreateAsync(user, registerVM.Password);
-                if (result.Succeeded)
+                if (_firmAccountRepozytory.getFirmAccount(registerVM.UserName)==null)
                 {
-                    var code = _userManager.GeneratePasswordResetTokenAsync(user).ToString();
-                    FirmAccount newFirmAccount = new FirmAccount()
+                    var user = new IdentityUser() { UserName = registerVM.UserName, Email = registerVM.Email };
+                    var result = await _userManager.CreateAsync(user, registerVM.Password);
+                    if (result.Succeeded)
                     {
-                        FirmDescriotion = registerVM.FirmDescriotion,
-                        FirmName = registerVM.FirmName,
-                        Events = new List<Event>(),
-                        Tokens = new List<Token>(),
-                        UserName = user.UserName,
-                        Comfirmed = false,
-                        ConfirmatioCode = code
-                    };
-                    _firmAccountRepozytory.addFirmAccout(newFirmAccount);
+                        var code = _userManager.GeneratePasswordResetTokenAsync(user).ToString();
+                        FirmAccount newFirmAccount = new FirmAccount()
+                        {
+                            FirmDescriotion = registerVM.FirmDescriotion,
+                            FirmName = registerVM.FirmName,
+                            Events = new List<Event>(),
+                            Tokens = new List<Token>(),
+                            UserName = user.UserName,
+                            Comfirmed = false,
+                            ConfirmatioCode = code
+                        };
+                        _firmAccountRepozytory.addFirmAccout(newFirmAccount);
 
-                    return RedirectToAction("SenndAccountConfirmEmail",registerVM);
+                        return RedirectToAction("SenndAccountConfirmEmail", registerVM);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Błędne hasło.\n" +
+                             "Hasło musi posiadać cojmniej 8 znaków i zawierać dużą i małą literę , liczbę i znak specyjalny");
+                        //registerVM.error = "Błędne hasło.\n" +
+                        //     "Hasło musi posiadać cojmniej 8 znaków i zawierać dużą i małą literę , liczbę i znak specyjalny";
+                    }
                 }
+                else
+                {
+                    ModelState.AddModelError("", "Podany urżtkownik  już istnieje proszę zmienić login");
+                    //registerVM.error = "Podany urżtkownik  już istnieje proszę zmienić login";
+                }
+               
             }
 
 
@@ -224,10 +253,15 @@ namespace PracaDyplomowa.Controllers
                 _firmAccountRepozytory.setConfirmatioCode(user.UserName, code);
                 using (MailMessage mail = new MailMessage())
                 {
+                    var body = "<div>" +
+                        "<h1>System informacyjny o inprezach masowych w Elblągu</h1>" +
+                        "<h2>Kod:</h2>" +
+                        "<h3>" + firm.ConfirmatioCode + "</h3>" +
+                        "</div>";
                     mail.From = new MailAddress("kar.matgogle@gmail.com");
                     mail.To.Add(user.Email);
                     mail.Subject = "Kod aktywacyjny";
-                    mail.Body = "<h1>"+ firm.ConfirmatioCode+"</h1>";
+                    mail.Body = body;
                     mail.IsBodyHtml = true;
 
                     _firmAccountRepozytory.setComfirmed(model.UserName, false);
@@ -240,6 +274,8 @@ namespace PracaDyplomowa.Controllers
                     }
                 }
             }
+            else
+                ModelState.AddModelError("", "Niepoprwne dane");
 
             return RedirectToAction("ActivateAccount");
         }

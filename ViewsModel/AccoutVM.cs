@@ -16,6 +16,7 @@ namespace PracaDyplomowa.ViewsModel
         public string NewTokenText { get; set; }
         public string NewPageId { get; set; }
         public string NewNamePage { get; set; }
+        public string DelTokentText { get; set; }
 
     }
 }

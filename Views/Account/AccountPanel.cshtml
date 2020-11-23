@@ -42,9 +42,21 @@
                 <ul class="col-12   m-auto">
                     @foreach (var item in Model.Tokens)
                     {
-                        <li class="col-12 col-lg-8  border-info m-auto">
+                    <div class="row">
+                        <div class="col-8 col-lg-8  border-info m-auto">
                             @item.NamePage
-                        </li>
+                        </div>
+                        <form class="form-horizontal  col-4 m-o p-o" method="delete" asp-controller="Token" asp-action="DeleteToken">
+                            <div class="form-group d-none">
+                                <input asp-for="DelTokentText" value="@item.TokenText" />
+                            </div>
+                            <div class=" row">
+                                <input type="submit" class="btn-danger btn  m-0 w-100 col-6 text-center" value="Usuń" />
+
+                            </div>
+                        </form>
+                    </div>
+                       
                     }
                 </ul>
 
