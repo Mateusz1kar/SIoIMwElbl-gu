@@ -19,10 +19,13 @@ namespace PracaDyplomowa.Models
         public DbSet<Token>  Tokens { get; set; }
         public DbSet<Publication> Publications  { get; set; }
         public DbSet<EventImages> EventImages { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<EventeTag> EventeTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Event>();
+            builder.Entity<Tag>();
            
             builder.Entity<FirmAccount>()
                 .HasKey(key =>new { key.UserName });
@@ -32,7 +35,10 @@ namespace PracaDyplomowa.Models
                 .HasKey(key => new { key.TokenText });
             builder.Entity<EventImages>()
                 .HasKey(key =>new { key.ImageName });
+            builder.Entity<EventeTag>()//klucz złożony 
+               .HasKey(kluczZlozony => new { kluczZlozony.TagId, kluczZlozony.EventId });
             base.OnModelCreating(builder);
+
         }
     }
 }

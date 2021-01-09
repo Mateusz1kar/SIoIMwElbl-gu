@@ -36,7 +36,6 @@ namespace PracaDyplomowa.Controllers
         }
         public IActionResult Login()
         {
-           
             return View();
         }
         [HttpPost]
@@ -66,15 +65,17 @@ namespace PracaDyplomowa.Controllers
             return View(loginvm);
         }
 
-        public IActionResult ActivateAccount()
+        public IActionResult ActivateAccount(string error="")
         {
+            ModelState.AddModelError("", error);
+
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> ActivateAccount(RegisterVM model, string error = "")
+        public async Task<IActionResult> ActivateAccount(RegisterVM model)
         {
-            
 
+            
             var user = await _userManager.FindByNameAsync(model.UserName);
 
             if (user != null)
@@ -160,41 +161,48 @@ namespace PracaDyplomowa.Controllers
         {
             if (ModelState.IsValid)
             {
-                
-                if (_firmAccountRepozytory.getFirmAccount(registerVM.UserName)==null)
+                if (registerVM.Password != registerVM.PasswordRepeat)
                 {
-                    var user = new IdentityUser() { UserName = registerVM.UserName, Email = registerVM.Email };
-                    var result = await _userManager.CreateAsync(user, registerVM.Password);
-                    if (result.Succeeded)
-                    {
-                        var code = _userManager.GeneratePasswordResetTokenAsync(user).ToString();
-                        FirmAccount newFirmAccount = new FirmAccount()
-                        {
-                            FirmDescriotion = registerVM.FirmDescriotion,
-                            FirmName = registerVM.FirmName,
-                            Events = new List<Event>(),
-                            Tokens = new List<Token>(),
-                            UserName = user.UserName,
-                            Comfirmed = false,
-                            ConfirmatioCode = code
-                        };
-                        _firmAccountRepozytory.addFirmAccout(newFirmAccount);
-
-                        return RedirectToAction("SenndAccountConfirmEmail", registerVM);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Błędne hasło.\n" +
-                             "Hasło musi posiadać cojmniej 8 znaków i zawierać dużą i małą literę , liczbę i znak specyjalny");
-                        //registerVM.error = "Błędne hasło.\n" +
-                        //     "Hasło musi posiadać cojmniej 8 znaków i zawierać dużą i małą literę , liczbę i znak specyjalny";
-                    }
+                    ModelState.AddModelError("", "Hasła nie są takie same");
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Podany urżtkownik  już istnieje proszę zmienić login");
-                    //registerVM.error = "Podany urżtkownik  już istnieje proszę zmienić login";
+                    if (_firmAccountRepozytory.getFirmAccount(registerVM.UserName) == null)
+                    {
+                        var user = new IdentityUser() { UserName = registerVM.UserName, Email = registerVM.Email };
+                        var result = await _userManager.CreateAsync(user, registerVM.Password);
+                        if (result.Succeeded)
+                        {
+                            var code = _userManager.GeneratePasswordResetTokenAsync(user).ToString();
+                            FirmAccount newFirmAccount = new FirmAccount()
+                            {
+                                FirmDescriotion = registerVM.FirmDescriotion,
+                                FirmName = registerVM.FirmName,
+                                Events = new List<Event>(),
+                                Tokens = new List<Token>(),
+                                UserName = user.UserName,
+                                Comfirmed = false,
+                                ConfirmatioCode = code
+                            };
+                            _firmAccountRepozytory.addFirmAccout(newFirmAccount);
+
+                            return RedirectToAction("SenndAccountConfirmEmail", registerVM);
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Błędne hasło.\n" +
+                                 "Hasło musi posiadać cojmniej 8 znaków i zawierać dużą i małą literę oraz liczbę i znak specyjalny");
+                            //registerVM.error = "Błędne hasło.\n" +
+                            //     "Hasło musi posiadać cojmniej 8 znaków i zawierać dużą i małą literę , liczbę i znak specyjalny";
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Podany urżtkownik  już istnieje proszę zmienić login");
+                        //registerVM.error = "Podany urżtkownik  już istnieje proszę zmienić login";
+                    }
                 }
+                    
                
             }
 
@@ -243,7 +251,7 @@ namespace PracaDyplomowa.Controllers
            
 
             var user = await _userManager.FindByNameAsync(model.UserName);
-
+            string error = "";
             if (user != null && user.Email==model.Email)
             {
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -267,17 +275,29 @@ namespace PracaDyplomowa.Controllers
                     _firmAccountRepozytory.setComfirmed(model.UserName, false);
                     using (System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587))
                     {
-                        smtp.Credentials = new System.Net.NetworkCredential("kar.matgogle@gmail.com", "NieUrzGmail@");
-                        smtp.EnableSsl = true;
-                        smtp.Send(mail);
+                        
+                        try
+                        {
+                            smtp.UseDefaultCredentials = false;
+                            smtp.Credentials = new System.Net.NetworkCredential("SIoIMwE@gmail.com", "PraceDyplomowa@@!");
+                            smtp.EnableSsl = true;
+                            smtp.Send(mail);
+                        }
+                        catch (Exception e)
+                        {
+                            error = e.Message;
+
+                            return RedirectToAction("ActivateAccount", new { error = error });
+                        }
+                       
 
                     }
                 }
             }
             else
-                ModelState.AddModelError("", "Niepoprwne dane");
+                error= "Niepoprwne dane";
 
-            return RedirectToAction("ActivateAccount");
+            return RedirectToAction("ActivateAccount",new { error = error });
         }
     }
    

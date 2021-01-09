@@ -12,12 +12,12 @@ namespace PracaDyplomowa.Models
 
         public int EventId { get; set; }
         [Required(ErrorMessage = "Nazwa jest wymagana")]
-        [StringLength(100, ErrorMessage = "Nazwa za długa")]
+        [StringLength(300, ErrorMessage = "Nazwa za długa")]
         public string Name { get; set; }
-        [StringLength(300, ErrorMessage = "Krutki opis jest za długa")]
+        [StringLength(500, ErrorMessage = "Krutki opis jest za długa")]
         public string ShortDescription { get; set; }
         [Required(ErrorMessage = "Opis jest wymagany")]
-        [StringLength(1000, ErrorMessage = "Opis za długa")]
+        [StringLength(10000, ErrorMessage = "Opis za długa")]
         public string Description { get; set; }
         [Required(ErrorMessage = "Lokalizacja jest wymagana")]
         [StringLength(200, ErrorMessage = "Miejsce jest za długe")]
@@ -32,6 +32,7 @@ namespace PracaDyplomowa.Models
         public FirmAccount FirmAccount { get; set; }
         public List<Publication> Publications { get; set; }
         public List<EventImages> Images { get; set; }
+        public List<EventeTag> Tags { get; set; }
 
 
     }

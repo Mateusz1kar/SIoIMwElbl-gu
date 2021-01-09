@@ -18,16 +18,18 @@ namespace PracaDyplomowa.Controllers
     {
         private readonly IEventRepozytory _eventRepozytory ;
         private readonly ITokenRepozytory _tokenRepozytory;
-        public EventController(IEventRepozytory eventRepozytory, ITokenRepozytory tokenRepozytory)
+        private readonly ITagRepozytory _tagRepozytory;
+        public EventController(IEventRepozytory eventRepozytory, ITokenRepozytory tokenRepozytory, ITagRepozytory tagRepozytory)
         {
             _eventRepozytory = eventRepozytory;
             _tokenRepozytory = tokenRepozytory;
+            _tagRepozytory = tagRepozytory;
         }
         // GET: /<controller>/
         [HttpGet]
         public IActionResult AddEvent()
         {
-            AddEventVM model = new AddEventVM();
+            AddEventVM model = new AddEventVM() { Tags = _tagRepozytory.getAllTag().ToList()};
             return View(model);
         }
         [HttpPost]
@@ -41,9 +43,14 @@ namespace PracaDyplomowa.Controllers
             {
                 ModelState.AddModelError("", "Prosze wprowadzić datę zakończenia ");
             }
-            if (ModelState.IsValid & User.Identity.IsAuthenticated & model.DateEnd != null & model.DateStart == null)
+            if (model.DateEnd < model.DateStart)
             {
-                
+                ModelState.AddModelError("", "Data zakończenia nie mołe być wcześniejsza niż data rozpoczęcia  ");
+            }
+
+            if (ModelState.IsValid & User.Identity.IsAuthenticated & model.DateEnd != null & model.DateStart != null & model.DateEnd >= model.DateStart)
+            {
+              
                 Event e = new Event
                 {
                     Name = model.Name,
@@ -54,10 +61,24 @@ namespace PracaDyplomowa.Controllers
                     DateEnd = model.DateEnd.Value,
                      UserName=User.Identity.Name,
                       Publications = new List<Publication>()
+
                 };
+                List<EventeTag> eventeTags = new List<EventeTag>();
+                if (model.CheckedTags != null)
+                {
+                    foreach (var tag in model.CheckedTags)
+                    {
+                        eventeTags.Add(new EventeTag()
+                        {
+                            TagId = tag,
+                            Tag = _tagRepozytory.getTag(tag),
+                            Event = e,
+                            EventId = e.EventId
+                        });
+                    }
+                }
+                e.Tags = eventeTags;
                 _eventRepozytory.addEvent(e);
-
-
                 return RedirectToAction("ShowEvents");
             }
             return View(model);
@@ -65,14 +86,19 @@ namespace PracaDyplomowa.Controllers
         }
         public IActionResult ShowEvents(EventsListVM model)
         {
-            model.eventList = _eventRepozytory.allEvent().ToList();
+            model.eventList = _eventRepozytory.searchEvents(null, false, new DateTime(), false, new DateTime(), false, null).ToList();
+            model.Tags = _tagRepozytory.getAllTag().ToList();
             return View(model);
         }
         public IActionResult MyEvents()
         {
-            EventsListVM myEventsList = new EventsListVM();
-            myEventsList.eventList = _eventRepozytory.allUserEvents(User.Identity.Name).ToList();
-            return View(myEventsList);
+            EventsListVM model = new EventsListVM()
+            {
+                eventList = _eventRepozytory.searchEvents(null, false, new DateTime(), false, new DateTime(), false, User.Identity.Name).ToList(),
+                Tags = _tagRepozytory.getAllTag().ToList()
+            };
+            
+            return View("ShowEvents", model);
         }
         //[HttpGet("[action]/{id}")]
         public IActionResult DetailsEvent(int id,string error="")
@@ -81,38 +107,62 @@ namespace PracaDyplomowa.Controllers
             {
                 ModelState.AddModelError("", error);
             }
-            
-                Event e = _eventRepozytory.findEvent(id);
-                var model = new DetailsEventVM() { eventDetail = e, error = error, Tokens = _tokenRepozytory.getAll() };
+            Event e = _eventRepozytory.findEvent(id);
+                var model = new DetailsEventVM() { eventDetail = e, error = error, Tokens = _tokenRepozytory.getAll(), Tags = _tagRepozytory.getAllTag().ToList(), author=e.FirmAccount };
                 return View(model);
             
             return RedirectToAction("ShowEvents");
         }
         public IActionResult UpdateEvent(DetailsEventVM model)
         {
-            //Event e = new Event();
-            //e.EventId = model.evemtDetail.EventId;
-            //e.Name = model.evemtDetail.Name;
-            //e.Place = model.evemtDetail.Place;
-            //e.ShortDescription = model.evemtDetail.ShortDescription;
-            //e.Description = model.evemtDetail.Description;
-            //e.DateStart = model.evemtDetail.DateStart;
-            //e.DateEnd = model.evemtDetail.DateEnd;
-            if (ModelState.IsValid & User.Identity.IsAuthenticated)
+            string error = "";
+            if (model.eventDetail.DateEnd < model.eventDetail.DateStart)
             {
-                var buf = _eventRepozytory.findEvent(model.eventDetail.EventId);
-                if (buf.UserName==User.Identity.Name)
+                error= "Data zakończenia nie mołe być wcześniejsza niż data rozpoczęcia  ";
+            }
+            if (ModelState.IsValid & User.Identity.IsAuthenticated )
+            {
+                if (model.eventDetail.DateEnd >= model.eventDetail.DateStart & model.eventDetail.ShortDescription != null & model.eventDetail.Description != null & model.eventDetail.ShortDescription != null)
                 {
-                    _eventRepozytory.update(model.eventDetail);
+                    var buf = _eventRepozytory.findEvent(model.eventDetail.EventId);
+                    if (buf.UserName == User.Identity.Name)
+                    {
+                        List<EventeTag> eventeTags = new List<EventeTag>();
+
+                        if (model.CheckedTags != null)
+                        {
+                            foreach (var tag in model.CheckedTags)
+                            {
+                                eventeTags.Add(new EventeTag()
+                                {
+                                    TagId = tag,
+                                    Tag = _tagRepozytory.getTag(tag),
+                                    Event = model.eventDetail,
+                                    EventId = model.eventDetail.EventId
+                                });
+                            }
+                        }
+                        model.eventDetail.Tags = eventeTags;
+                        _eventRepozytory.update(model.eventDetail);
+                    }
+                    else
+                    {
+                        error = "Brak uprwinień ";
+                    }
+
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Brak uprwinień ");
+                    error = "Niepoprawne dane ";
                 }
                 
             }
-           
-            return RedirectToAction("DetailsEvent", new {id= model.eventDetail.EventId});
+            else
+            {
+                error = "Niepoprawne dane ";
+            }
+
+            return RedirectToAction("DetailsEvent", new {id= model.eventDetail.EventId, error = error });
         }
         public IActionResult DeleteEvent(int id)
         {
@@ -135,7 +185,38 @@ namespace PracaDyplomowa.Controllers
 
         public IActionResult SearchEvents(EventsListVM model)
         {
-            model.eventList = _eventRepozytory.searchEvents(model.searchName, model.sortByDS == "true", model.searcDateStart, model.sortByDE == "true", model.searcDateEnd, model.typeSort == "Up").ToList();
+            var checkIsDateSorted = new DateTime();
+            model.eventList = new List<Event>();
+            var event_TagNotExluted = _eventRepozytory.searchEvents(model.searchName, model.searcDateStart != checkIsDateSorted, model.searcDateStart, model.searcDateEnd != checkIsDateSorted, model.searcDateEnd, model.typeSort == "Up", model.userEventSearch).ToList();
+            foreach (var item in event_TagNotExluted)
+            {
+                bool isTagExluted = false;
+                if (model.CheckedTags != null)
+                {
+                    foreach (var t in model.CheckedTags)
+                    {
+                        if (item.Tags != null)
+                            foreach (var eventTag in item.Tags)
+                            {
+                                if (eventTag.TagId == t)
+                                {
+                                    isTagExluted = true;
+                                }
+                            }
+
+                    }
+                    if (isTagExluted)
+                    {
+                        model.eventList.Add(item);
+                    }
+                }
+                else
+                {
+                    model.eventList = event_TagNotExluted;
+                }
+                
+            }
+            model.Tags = _tagRepozytory.getAllTag().ToList();
             return View("ShowEvents", model);
         }
 

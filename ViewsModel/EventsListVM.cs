@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using PracaDyplomowa.Models;
 
 namespace PracaDyplomowa.ViewsModel
@@ -18,5 +19,10 @@ namespace PracaDyplomowa.ViewsModel
         public string sortByDE { get; set; }
         public DateTime searcDateEnd { get; set; }
         public string typeSort { get; set; }
+        public List<Tag> Tags { get; set; }
+        [BindProperty]
+        public List<int> CheckedTags { get; set; }
+        [BindProperty]
+        public string userEventSearch { get; set; }
     }
 }

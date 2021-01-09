@@ -1,42 +1,67 @@
 @model PracaDyplomowa.ViewsModel.EventsListVM
 <div class="container">
-    <button type="button" class="btn btn-info btn-danger" data-toggle="collapse" data-target="#demo">Wyszukaj/Sortuj</button>
+    <button type="button" class="btn btn-info btn-secondary" data-toggle="collapse" data-target="#demo">Wyszukaj</button>
     <div id="demo" class="collapse">
-        <div class="col-sm-6">
+        <div class="col-12">
             <form method="post" asp-action="SearchEvents">
-                <div class="form-group">
-                    <label class="col-form-label" asp-for="searchName">Nazwa</label>
-                    <div class="">
+                <div class="form-group row">
+                    <label class="col-form-label col-12" asp-for="searchName">Nazwa</label>
+                    <div class=" col-12">
                         <input class="form-control" asp-for="searchName" placeholder="Nazwa" />
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label asp-for="CheckedTags" class="col-12 col-form-label ">Tagi</label>
+                    <div class="col-12 ">
+                        @if (Model.Tags != null)
+                        {
+                            @foreach (Tag t in Model.Tags)
+                            {
+                                <div class="form-check form-check-inline ">
+                                    <input class="form-check-input" name="CheckedTags" type="checkbox" value="@t.TagId">
+                                    <label class="form-check-label" asp-for="CheckedTags">@t.Name</label>
+                                </div>
+                            }}
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="form-check form-check-inlin ">
+                                <input class="form-check-input" name="userEventSearch" type="checkbox" value="@User.Identity.Name">
+                                <label class="form-check-label" asp-for="userEventSearch">Wyszukaj tylko moje wydarzenia</label>
+                            </div>
+                        }
 
-                <div class="form-group">
-
-                    <label class="col-form-label" asp-for="searcDateStart">Rozpoczęte przed</label>
-                    <div class="">
-                        <input class="form-control" asp-for="searcDateStart" type="date" value="@DateTime.Today" />
-                        <input class="form-control" asp-for="sortByDS" type="checkbox" value="true" />
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-form-label" asp-for="searcDateEnd">Zakończone do</label>
-                    <div class="">
-                        <input class="form-control" asp-for="searcDateEnd" type="date" value="@DateTime.Today" />
-                        <input class="form-control" asp-for="sortByDE" type="checkbox" value="true" />
+                <div class="form-group row">
+
+                    <label class="col-form-label col-12" asp-for="searcDateStart">Rozpoczęte przed</label>
+                    <div class="col-12">
+                        <input class="form-control " asp-for="searcDateStart" type="date" value="@DateTime.Today" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-12" asp-for="searcDateEnd">Zakończone do</label>
+                    <div class="col-12">
+                        <input class="form-control " asp-for="searcDateEnd" type="date" value="@DateTime.Today" />
 
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-form-label" asp-for="typeSort">Typ sortowania</label>
-                    <div class="text-center">
-                        <label class="col-form-label" asp-for="typeSort">Malejąco</label>
-                        <input class="form-control" asp-for="typeSort" type="radio" value="Down" />
-                        <label class="col-form-label" asp-for="typeSort">Rosnąco</label>
-                        <input class="form-control" asp-for="typeSort" type="radio" value="Up" />
+                <div class="form-group row">
+                    <label class="col-form-label col-12" asp-for="typeSort">Typ sortowania</label>
+                    <div class="text-center col-12">
+                        <div class="row">
+                            <input class="form-control col-1" asp-for="typeSort" type="radio" value="Down" />
+                            <label class="col-form-label col-2" asp-for="typeSort">Malejąco</label>
+                        </div>
+                        <div class="row">
+                            <input class="form-control col-1" asp-for="typeSort" type="radio" value="Up" />
+                            <label class="col-form-label col-2" asp-for="typeSort">Rosnąco</label>
+                        </div>
+                        <input type="submit" class="btn btn-info btn-secondary  col-2 float-right" value="Szukaj" />
                     </div>
+
                 </div>
-                <input type="submit" class="" value="Szukaj" />
+
             </form>
         </div>
     </div>
@@ -48,10 +73,17 @@
     <div class="row">
         <div class="col-12 text-center" id="EventName"><h2>@e.Name</h2></div>
     </div>
-    <div class="col-lg-6 col-lg-4">
-        <h3>Numer: @e.EventId</h3>
+    <div class="col-12">
         <h3>Krótki opis: @e.ShortDescription</h3>
-        <h3>Opis: @e.Description</h3>
+        @if (e.Tags != null)
+        {
+            @foreach (EventeTag t in e.Tags)
+            {
+                <div class="form-check form-check-inline text-success">
+                    <h4>@t.Tag.Name</h4>
+                </div>
+               }
+        }
         <h3>Miejsce: @e.Place</h3>
         <h3>Data rozpoczęcia: @e.DateStart</h3>
         <h3>Data zakończenia: @e.DateEnd</h3>

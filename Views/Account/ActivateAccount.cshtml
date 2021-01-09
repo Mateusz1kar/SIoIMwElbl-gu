@@ -1,15 +1,17 @@
 ﻿@model PracaDyplomowa.ViewsModel.RegisterVM
 
 <div class="row">
-
+    <div asp-validation-summary="All" class="text-danger"></div>
+</div>
+<div class="row">
     <div class="col-md-4">
-        <button class="btn btn-primary m-1 w-100 text-center" onclick="displayActivationForm()">akywacja konta </button>
+        <button class="btn btn-primary m-1 w-100 text-center" onclick="displayActivationForm()">Akywacja konta </button>
     </div>
     <div class="col-md-4">
-        <button class="btn btn-primary m-1 w-100 text-center" onclick="displayubResetForm()"> Reset chasła</button>
+        <button class="btn btn-primary m-1 w-100 text-center" onclick="displayubResetForm()"> Reset hasła</button>
     </div>
     <div class="col-md-4">
-        <button class="btn btn-primary m-1 w-100 text-center" onclick="displaySendCodeForm()">wysłanie kodu aktywacyjnego/resetu chasła</button>
+        <button class="btn btn-primary m-1 w-100 text-center" onclick="displaySendCodeForm()">Wyślij kod aktywacyjny/resetu hasła</button>
     </div>
 
 </div>
@@ -62,7 +64,7 @@
 </script>
 <div class="row m-1 d-none" id="activationForm">
     <div class="col-12 text-center border m-auto m-1">
-        akywacja konta
+        Akywacja konta
         <form enctype="multipart/form-data" asp-action="ActivateAccount" asp-controller="Account" method="post" class="form-horizontal login" role="form">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
@@ -87,10 +89,10 @@
             </div>
             <div class="form-group">
 
-                <input type="text" asp-for="ConfirmatioCode" class="form-control" id="FirmName" placeholder="KodActywacyjny">
+                <input type="text" asp-for="ConfirmatioCode" class="form-control" id="FirmName" placeholder="Kod Aktywacyjny">
                 <span asp-validation-for="ConfirmatioCode" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary">Aktyuj</button>
+            <button type="submit" class="btn btn-primary">Aktywuj</button>
         </form>
     </div>
 </div>
@@ -126,7 +128,7 @@
             </div>
             <div class="form-group">
 
-                <input type="text" asp-for="ConfirmatioCode" class="form-control" id="FirmName" placeholder="KodActywacyjny">
+                <input type="text" asp-for="ConfirmatioCode" class="form-control" id="FirmName" placeholder="Kod resetu hasła">
                 <span asp-validation-for="ConfirmatioCode" class="text-danger"></span>
             </div>
             <button type="submit" class="btn btn-primary">Resetuj</button>
@@ -135,7 +137,7 @@
 </div>
 <div class="row m-1 d-none " id="sendCodeForm">
     <div class="col-12 text-center border m-auto m-1">
-        wysłanie kodu aktywacyjnego/resetu chasła
+        Wysłanie kodu aktywacyjnego/resetu hasła
         <form enctype="multipart/form-data" asp-action="SenndAccountConfirmEmail" asp-controller="Account" method="post" class="form-horizontal login" role="form">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">

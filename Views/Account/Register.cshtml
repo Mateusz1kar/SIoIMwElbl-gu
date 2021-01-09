@@ -4,40 +4,45 @@
 </div>
 
 
-    <form enctype="multipart/form-data" asp-action="Register" asp-controller="Account" method="post" class="form-horizontal login" role="form">
-        <h2>Stwórz konto</h2>
-        <div asp-validation-summary="All" class="text-danger"></div>
-        <div class="form-group">
+<form enctype="multipart/form-data" asp-action="Register" asp-controller="Account" method="post" class="form-horizontal login" role="form">
+    <h2>Stwórz konto</h2>
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
 
-            <input type="email" asp-for="Email" class="form-control" id="Email" placeholder="Email">
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-        <div class="form-group">
+        <input type="email" asp-for="Email" class="form-control" id="Email" placeholder="Email">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
 
-            <input type="text" asp-for="UserName" class="form-control" id="UserName" placeholder="Login">
-            <span asp-validation-for="UserName" class="text-danger"></span>
-        </div>
-        <div class="form-group">
+        <input type="text" asp-for="UserName" class="form-control" id="UserName" placeholder="Login">
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
 
-            <input type="password" asp-for="Password" class="form-control" id="Password" placeholder="Hasło">
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
-        <div class="form-group">
+        <input type="password" asp-for="Password" class="form-control" id="Password" placeholder="Hasło">
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
 
-            <input type="text" asp-for="FirmName" class="form-control" id="FirmName" placeholder="Nazwa firmy">
-            <span asp-validation-for="FirmName" class="text-danger"></span>
-        </div>
-        <div class="form-group">
+        <input type="password" asp-for="PasswordRepeat" class="form-control" id="Password2" placeholder="Powtórz hasło ">
+        <span asp-validation-for="PasswordRepeat" class="text-danger"></span>
+    </div>
+    <div class="form-group">
 
-            <input type="text" asp-for="FirmDescriotion" class="form-control" id="FirmDescriotion" placeholder="Opis firmy">
-            <span asp-validation-for="FirmDescriotion" class="text-danger"></span>
-        </div>
-        @*<div class="form-group">
+        <input type="text" asp-for="FirmName" class="form-control" id="FirmName" placeholder="Nazwa firmy">
+        <span asp-validation-for="FirmName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+
+        <input type="text" asp-for="FirmDescriotion" class="form-control" id="FirmDescriotion" placeholder="Opis firmy">
+        <span asp-validation-for="FirmDescriotion" class="text-danger"></span>
+    </div>
+    @*<div class="form-group">
 
             <input type="text" asp-for="" class="form-control" id="" placeholder="">
             <span asp-validation-for="" class="text-danger"></span>
         </div>*@
 
 
-        <button type="submit" class="btn btn-primary">Zarejestruj</button>
-    </form>
+    <button type="submit" class="btn btn-primary">Zarejestruj</button>
+</form>

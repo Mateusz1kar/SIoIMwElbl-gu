@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using PracaDyplomowa.Models;
 
 namespace PracaDyplomowa.ViewsModel
@@ -20,6 +21,12 @@ namespace PracaDyplomowa.ViewsModel
         public string PublicationPageId { get; set; }
         public string PublikationImageName { get; set; }
         public List<string> TokenListCheced { get; set; }
+        public List<Tag> Tags { get; set; }
+        [BindProperty]
+        public List<int> CheckedTags { get; set; }
+        [BindProperty]
+        public string SendMailToTown { get; set; }
+        public FirmAccount author { get; set; }
 
     }
 }

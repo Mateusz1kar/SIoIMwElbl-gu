@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PracaDyplomowa.Interface;
 using PracaDyplomowa.Models;
@@ -17,11 +19,15 @@ namespace PracaDyplomowa.Controllers
         private readonly IHostingEnvironment hostingEnvironment;
         private readonly IImageRepozytory _imageRepozytory;
         private readonly ITokenRepozytory _tokenRepozytory;
-        public PublicationController(IHostingEnvironment hostingEnvironment, IImageRepozytory imageRepozytory, ITokenRepozytory tokenRepozytory)
+        private readonly IEventRepozytory _eventRepozytory;
+        private readonly UserManager<IdentityUser> _userManager;
+        public PublicationController(IEventRepozytory eventRepozytory,IHostingEnvironment hostingEnvironment, IImageRepozytory imageRepozytory, ITokenRepozytory tokenRepozytory, UserManager<IdentityUser> userManager)
         {
             this.hostingEnvironment = hostingEnvironment;
             _imageRepozytory = imageRepozytory;
             _tokenRepozytory = tokenRepozytory;
+            _userManager = userManager;
+            _eventRepozytory = eventRepozytory;
         }
         // GET: /<controller>/
         //public async Task<IActionResult> PublicToFacebook()
@@ -60,6 +66,10 @@ namespace PracaDyplomowa.Controllers
         public async Task<IActionResult> PublicImageToFacebook(DetailsEventVM model)
         {
             var error = "";
+            if (model.SendMailToTown == "true")
+            {
+                 error = SenndInformationEmaiToTown(model).Result;
+            }
             if (model.TokenListCheced!=null)
             {
                 foreach (var token in model.TokenListCheced)
@@ -69,7 +79,7 @@ namespace PracaDyplomowa.Controllers
                     token,
                     pageId.PageId
                    );
-                    if (model.PublikationImageName != "")
+                    if (model.PublikationImageName != "" && model.PublikationImageName != null)
                     {
                         string imageUrl = Path.Combine("https://sioimwelblągu.azurewebsites.net/Images/EventImages/", model.PublikationImageName);
                         var result = facebook.PublishToFacebook(model.PublicationText, imageUrl);
@@ -79,6 +89,8 @@ namespace PracaDyplomowa.Controllers
                         var result = facebook.PublishSimplePost(model.PublicationText);
                     }
                 }
+               
+
             }
             else
             {
@@ -120,6 +132,64 @@ namespace PracaDyplomowa.Controllers
 
             return RedirectToAction("DetailsEvent", "Event", new { id = model.id, error = error });
 
+        }
+        public async Task<string> SenndInformationEmaiToTown(DetailsEventVM model)
+        {
+
+            string error = "";
+            if (User.Identity.IsAuthenticated)
+            {
+                var ew = _eventRepozytory.findEvent(model.id);
+                var user = await _userManager.FindByNameAsync(User.Identity.Name);
+                if (ew.FirmAccount != null && ew.UserName == User.Identity.Name)
+                {
+
+                    using (MailMessage mail = new MailMessage())
+                    {
+                        var body = "<div>" +
+                            "<h1>System informacyjny o inprezach masowych w Elblągu</h1>" +
+                            "<h2>Informacjei o wydarzeniu:</h2>" +
+                            "<h3>Nazwa: " + ew.Name + "</h3>" +
+                            "<h3>Miejsce:" + ew.Place+ "</h3>" +
+                            "<h3>Data rozpoczęcia: " + ew.DateStart + "</h3>" +
+                            "<h3>Data zakończenia: " + ew.DateEnd+ "</h3>" +
+                            "<h3>Organizator: " + ew.FirmAccount.FirmName + "</h3>" +
+                             "<h3>Opis: " + ew.Description+ "</h3><hr/>" +
+                            "<h5>Wiadomość generowana automatycznie prosze nie odpowadać.</h5>" +
+
+                            "</div>";
+                        mail.From = new MailAddress("kar.matgogle@gmail.com");
+                        mail.To.Add(user.Email);
+                        mail.Subject = "Nowe wydarzenie ";
+                        mail.Body = body;
+                        mail.IsBodyHtml = true;
+                        using (System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587))
+                        {
+
+                            try
+                            {
+                                smtp.UseDefaultCredentials = false;
+                                smtp.Credentials = new System.Net.NetworkCredential("SIoIMwE@gmail.com", "PraceDyplomowa@@!");
+                                smtp.EnableSsl = true;
+                                smtp.Send(mail);
+                            }
+                            catch (Exception e)
+                            {
+                                error = e.Message;
+
+                                return error;
+                            }
+
+
+                        }
+                    }
+                }
+                else
+                    error = "Niepoprwne dane";
+            }
+
+
+            return  error;
         }
     }
 }

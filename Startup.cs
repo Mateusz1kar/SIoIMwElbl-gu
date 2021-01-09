@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using PracaDyplomowa.Interface;
 using PracaDyplomowa.Models;
 using PracaDyplomowa.Repozytory;
+using Newtonsoft.Json;
 
 namespace PracaDyplomowa
 {
@@ -34,11 +35,16 @@ namespace PracaDyplomowa
             services.AddTransient<IPublicationRepozytory, PublicationRepozytory>();
             services.AddTransient<ITokenRepozytory, TokenRepozytory>();
             services.AddTransient<IImageRepozytory, ImageRepozytory>();
+            services.AddTransient<ITagRepozytory, TagRepozytory>();
             services.AddControllersWithViews();
             //autoryzacja urzytkownika
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
-         
+            services.AddControllers().AddJsonOptions(options =>
+                options.JsonSerializerOptions.MaxDepth=32
+                );
+
+
 
         }
 

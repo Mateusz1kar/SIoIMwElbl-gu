@@ -11,7 +11,7 @@
 
 
         <div class="row " id="accountProfileDescription">
-            <div class="col-12   m-auto">s
+            <div class="col-12   m-auto">
                 @Model.FirmDescriotion
             </div>
         </div>
@@ -32,7 +32,7 @@
                         <span asp-validation-for="FirmDescriotion" class="text-danger"></span>
                     </div>
                 </div>
-                <input type="submit" value="Zatwierdź zaminy" />
+                <input type="submit" class="btn btn-dark" value="Zatwierdź zaminy" />
             </form>
         </div>
         <div class="row">
@@ -59,7 +59,7 @@
                        
                     }
                 </ul>
-
+                
             }
         </div>
         @*<div class="row">
@@ -118,32 +118,86 @@
     </div>
 </div>
 <div class="row d-none" id="PostPageForm">
-    <h3> Dodaj stone publikacji:</h3>
-    <form asp-action="AddToken" asp-controller="Token" method="post" class="col-12">
-        <div asp-validation-summary="All" class="text-danger"></div>
-        <div class="form-group row">
-            <label asp-for="NewTokenText" class="col-sm-2 col-form-label">Token:</label>
-            <div class="col-sm-10">
-                <input asp-for="NewTokenText" class="form-control" />
-                <span asp-validation-summary="NewTokenText" class="text-danger"></span>
+    <div class="col-12">
+        <h3> Dodaj stone publikacji:</h3>
+        <form asp-action="AddToken" asp-controller="Token" method="post" class="col-12">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group row">
+                <label asp-for="NewTokenText" class="col-sm-2 col-form-label">Token:</label>
+                <div class="col-sm-10">
+                    <input asp-for="NewTokenText" class="form-control" />
+                    <span asp-validation-summary="NewTokenText" class="text-danger"></span>
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="NewPageId" class="col-sm-2 col-form-label">Id strony </label>
-            <div class=" col-sm-10">
-                <input asp-for="NewPageId" class="form-control" />
-                <span asp-validation-for="NewPageId" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="NewPageId" class="col-sm-2 col-form-label">Id strony </label>
+                <div class=" col-sm-10">
+                    <input asp-for="NewPageId" class="form-control" />
+                    <span asp-validation-for="NewPageId" class="text-danger"></span>
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="NewNamePage" class="col-sm-2 col-form-label">Nazwa strony </label>
-            <div class=" col-sm-10">
-                <input asp-for="NewNamePage" class="form-control" />
-                <span asp-validation-for="NewNamePage" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="NewNamePage" class="col-sm-2 col-form-label">Nazwa strony </label>
+                <div class=" col-sm-10">
+                    <input asp-for="NewNamePage" class="form-control" />
+                    <span asp-validation-for="NewNamePage" class="text-danger"></span>
+                </div>
             </div>
+            <input class="btn btn-dark float-right" type="submit" value="Dodaj" />
+        </form>
+        <div class="col-12">
+            <button class=" btn btn-primary" onclick="DisplayaddTokeInstruktion()">Jak uzyskać token i id strony</button>
+            <div class="col-12 d-none" id="addTokienInnstruction">
+                <ol>
+                    <li>Konto Facebook  dla firm</li>
+                    <li>
+                        MyApps
+
+                        <ol>
+                            <li>Wybierz opcję „Manage Business Integrations</li>
+                            <li>App Display Name (dowolna nazwa aplikacji np. Wydarzenia )</li>
+                            <li>App Purpose = Clients</li>
+                        </ol>
+                    </li>
+
+                    <li>
+                        Tools
+                    </li>
+                    <li>
+                        Graph API Explorer(https://developers.facebook.com/tools/explorer)
+                        <ol>
+                            <li>Facebook App (Wybierz swoją aplikację  )</li>
+                            <li>User or page ( wybierz „Get user Access Token”</li>
+                            <li>
+                                Wybierz uprawnienia
+                                <ul>
+                                    <li>pages_show_list</li>
+                                    <li>ads_management</li>
+                                    <li>business_management</li>
+                                    <li>attribution_read</li>
+                                    <li>pages_read_engagement</li>
+
+                                </ul>
+                            </li>
+                            <li>Generate Access Token</li>
+                        </ol>
+
+                    </li>
+                    <li>
+                        Access Token Debugger(https://developers.facebook.com/tools/debug/accesstoken)
+                        <ol>
+                            <li>Wydłuż ważność wygenerowanego tokenu (Extend Access Token )</li>
+                        </ol>
+                    </li>
+                    <li>W Graph API Explorer submit polecenie „me/accounts”</li>
+                    <li>Skopiuj access token i page id</li>
+
+                </ol>
+            </div>
+
         </div>
-        <input type="submit" value="Dodaj" />
-    </form>
+    </div>
+   
 </div>
 <script>
     //document.getElementById("btnAddPostPage").click(){
@@ -201,5 +255,21 @@
                     classesUpdate.push("d-none");
                 element.className = classesUpdate.join(" ");
             } 
+    }
+    function DisplayaddTokeInstruktion() {
+        var element = document.getElementById("addTokienInnstruction");
+        if (element.classList) {
+            element.classList.toggle("d-none");
+        } else {
+            // For IE9
+            var classes = element.className.split(" ");
+            var i = classes.indexOf("d-none");
+
+            if (i >= 0)
+                classes.splice(i, 1);
+            else
+                classes.push("d-none");
+            element.className = classes.join(" ");
+        }
     }
 </script>

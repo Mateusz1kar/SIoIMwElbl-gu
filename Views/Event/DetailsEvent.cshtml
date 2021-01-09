@@ -9,11 +9,25 @@
 
     <div class="col-md-8" id="EventData">
 
-
+        @if (Model.eventDetail.Tags != null)
+        {
+            @foreach (EventeTag t in Model.eventDetail.Tags)
+            {
+                <div class="form-check form-check-inline text-success">
+                    <h4>@t.Tag.Name</h4>
+                </div>
+            }
+        }
         <h3>Miejsce: @Model.eventDetail.Place</h3>
         <h3>Data rozpoczęcia: @Model.eventDetail.DateStart</h3>
         <h3>Data Zakończenia: @Model.eventDetail.DateEnd</h3>
-        <h3>@Model.eventDetail.Description</h3>
+        <h3>Organizator: @Model.eventDetail.FirmAccount.FirmName</h3><button class="btn btn-primary my-1 mx-0 text-center" onclick="displayOwnerDescription()">Wyświetl informacje  o organizatorze</button>
+        <h4 class=" d-none" id="ownerDescription">@Model.eventDetail.FirmAccount.FirmDescriotion</h4>
+        <hr />
+        <h3>
+            <p style=" white-space: pre
+">@Model.eventDetail.Description</p>
+    </h3>
 
 
 
@@ -36,17 +50,53 @@
                 </div>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.eventDetail.ShortDescription" class="custom-control-label col-12">Krótki opis</label>
-                <div class="col-12">
-                    <input asp-for="@Model.eventDetail.ShortDescription" class="form-control" />
-                    <span asp-validation-for="@Model.eventDetail.ShortDescription" class="text-danger"></span>
+                <label asp-for="@Model.eventDetail.ShortDescription" class="col-2 custom-control-label">Krótki opis</label>
+                <div class="col-sm-10">
+                    <textarea asp-for="@Model.eventDetail.ShortDescription" class="form-control" maxlength="500" rows="5"></textarea>
+                    @*<input asp-for="ShortDescription" class="form-control" />*@
+                    <span asp-validation-summary="@Model.eventDetail.ShortDescription" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group ">
+                <label asp-for="CheckedTags" class="col-2 custom-control-label ">Tagi</label>
+                <div class="col-sm-10 ">
+                    @if (Model.Tags != null)
+                    {
+                        @foreach (Tag t in Model.Tags)
+                        {
+                            <div class="form-check form-check-inline">
+                                @{ bool isEventTag = false;}
+                                @if (Model.eventDetail.Tags != null)
+                                    @foreach (var item in Model.eventDetail.Tags)
+                                    {
+
+                                        if (t.TagId == item.TagId)
+                                        {
+                                            isEventTag = true;
+
+                                        }
+                                    }
+                                @if (isEventTag)
+                                {
+                                    <input class="form-check-input" name="CheckedTags" type="checkbox" value="@t.TagId" checked>
+                                    <label class="form-check-label" asp-for="CheckedTags">@t.Name</label>
+                                }
+                                else
+                                {
+                                    <input class="form-check-input" name="CheckedTags" type="checkbox" value="@t.TagId">
+                                    <label class="form-check-label" asp-for="CheckedTags">@t.Name</label>
+                                }
+
+                            </div>
+                        }
+                    }
                 </div>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.eventDetail.Description" class="custom-control-label col-12">Opis</label>
-                <div class="col-12">
-                    <textarea asp-for="@Model.eventDetail.Description" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="@Model.eventDetail.Description" class="text-danger"></span>
+                <label asp-for="@Model.eventDetail.Description" class="col-2 custom-control-label">Opis</label>
+                <div class="col-sm-10">
+                    <textarea asp-for="@Model.eventDetail.Description" class="form-control" maxlength="10000" rows="10"></textarea>
+                    <span asp-validation-summary="@Model.eventDetail.Description" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
@@ -60,19 +110,19 @@
             <div class="form-group">
                 <label asp-for="@Model.eventDetail.DateStart" class="custom-control-label col-12">Data początku</label>
                 <div class="col-12">
-                    <input asp-for="@Model.eventDetail.DateStart" class="form-control" type="date" />
+                    <input asp-for="@Model.eventDetail.DateStart" class="form-control" />
                     <span asp-validation-for="@Model.eventDetail.DateStart" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
                 <label asp-for="@Model.eventDetail.DateEnd" class="custom-control-label col-12">Data końca</label>
                 <div class="col-12">
-                    <input asp-for="@Model.eventDetail.DateEnd" class="form-control" type="date" />
+                    <input asp-for="@Model.eventDetail.DateEnd" class="form-control" />
                     <span asp-validation-for="@Model.eventDetail.DateEnd" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group">
-                <input type="submit" class=" btn-primary btn " />
+                <input type="submit" value="Aktualizuj"class=" btn-primary btn " />
             </div>
 
         </form>
@@ -91,16 +141,17 @@
                     <h7 class="col-12 ">Napewno chesz usunąć to wydarzenie?</h7>
                     <div class="col-12">
 
-                        <form class="form-horizontal  m-o col-12 p-o" method="delete" asp-action="DeleteEvent">
-                            <div class="form-group d-none">
-                                <input asp-for="@Model.id" value="@Model.eventDetail.EventId" />
-                            </div>
-                            <div class=" row">
-                                <input type="submit" class="btn-success btn  m-0 w-100 col-6 text-center" value="Takt" />
+                        <div class=" row">
+                            <form class="form-horizontal  m-o col-6 p-o" method="delete" asp-action="DeleteEvent">
+                                <div class="form-group d-none">
+                                    <input asp-for="@Model.id" value="@Model.eventDetail.EventId" />
+                                </div>
+                                <input type="submit" class="btn-success btn  m-0 w-100 col-12 text-center" value="Takt" />
+                                </form>
                                 <button class="btn btn-danger w-100 text-center  col-6" onclick="displayDeleteAsk()">Nie</button>
 
-                            </div>
-                        </form>
+                        </div>
+                        
 
                     </div>
 
@@ -193,6 +244,22 @@
             element.className = classesUpdate.join(" ");
         }
     }
+    function displayOwnerDescription(){
+        var element = document.getElementById("ownerDescription");
+        if (element.classList) {
+            element.classList.toggle("d-none");
+        } else {
+            // For IE9
+            var classes = element.className.split(" ");
+            var i = classes.indexOf("d-none");
+
+            if (i >= 0)
+                classes.splice(i, 1);
+            else
+                classes.push("d-none");
+            element.className = classes.join(" ");
+        }
+    }
     function displayImageAddForm() {
         var element = document.getElementById("AddImageForm");
         if (element.classList) {
@@ -274,7 +341,7 @@
                 </div>
             </div>
             <div id="list1" class="dropdown-check-list form-group" tabindex="100">
-                <button type="button" class="anchor btn col-12 text-center btn-primary">Opublikuj wydarzenie</button>                
+                <button type="button" class="anchor btn col-12 text-center btn-primary">Strony publikacji</button>
                 <div id="items" class="items" style="display:none">
                     <asp:CheckBoxList id="TokenListCheced"
                                       AutoPostBack="True"
@@ -288,14 +355,20 @@
                                       runat="server">
                         @foreach (var item in Model.Tokens)
                         {
-                            <div class="col-12 text-center bg-primary border-dark border  p-1" >
+                            <div class="col-12 text-center bg-primary border-dark border  p-1">
                                 <input name="TokenListCheced" type="checkbox" value="@item.TokenText" id="@item.NamePage ">
                                 <label for="@item.NamePage">
                                     <asp:ListItem value="@item.TokenText">@item.NamePage </asp:ListItem>
                                 </label>
                             </div>
                         }
+
                     </asp:CheckBoxList>
+
+                </div>
+                <div class="form-check form-check-inlin ">
+                    <input class="form-check-input" name="SendMailToTown" type="checkbox" value="true">
+                    <label class="form-check-label" asp-for="SendMailToTown">Powiadom Urząd Miasta w Elblągu</label>
                 </div>
             </div>
             @*@foreach (var item in Model.Tokens)

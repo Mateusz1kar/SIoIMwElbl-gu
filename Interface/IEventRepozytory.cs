@@ -13,7 +13,8 @@ namespace PracaDyplomowa.Interface
         IEnumerable<Event> allEvent();
         IEnumerable<Event> allUserEvents(string userName);
         Event findEvent(int Id);
-        IEnumerable<Event> searchEvents(string name, bool searchByDS, DateTime DateStart, bool searchByDE, DateTime DateEnd, bool typeSort);
+        IEnumerable<Event> searchEvents(string name, bool searchByDS, DateTime DateStart, bool searchByDE, DateTime DateEnd, bool typeSort, string userName);
         void update(Event e);
+        public List<Tag> getEventTag(Event e);
     }
 }

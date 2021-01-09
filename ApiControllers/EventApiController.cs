@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PracaDyplomowa.Interface;
+using PracaDyplomowa.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,7 +24,7 @@ namespace PracaDyplomowa.ApiControllers
         public IActionResult AllEvent(int? pageNymber, int? pageSize)
         {
             var currentPageNumber = pageNymber ?? 1;
-            var currentPageSize = pageSize ?? 5;
+            var currentPageSize = pageSize ?? 10;
             var evnets = from e in _eventRepozytory.allEvent()
                          select new
                          {
@@ -33,10 +34,39 @@ namespace PracaDyplomowa.ApiControllers
                              dateStart = e.DateStart.ToString(),
                              dataEnd = e.DateEnd.ToString(),
                              shortDescription = e.ShortDescription,
-                             description = e.Description
+                             description = e.Description,
+                             tag = e.Tags ==null ? new List<Tag>() : _eventRepozytory.getEventTag(e)
                          };
+           
             return Ok(evnets.Skip((currentPageNumber - 1) * currentPageSize).Take(currentPageSize));
         }
+
+        [HttpGet("[action]")]
+        public IActionResult SearchEvent(int? pageNymber, int? pageSize, string? searchName, DateTime? searcDateStart, DateTime? searcDateEnd, bool? sortUp)
+        {
+            DateTime checkIsDateSorted = new DateTime();
+            var currentSearchName = searchName ?? "";
+            var currentSearcDateStart = searcDateStart ?? new DateTime();
+            var currentSsearcDateEnd = searcDateEnd ?? new DateTime();
+            var currentSortUp = sortUp ?? false;
+            var currentPageNumber = pageNymber ?? 1;
+            var currentPageSize = pageSize ?? 10;
+            var evnets = from e in _eventRepozytory.searchEvents(currentSearchName, currentSearcDateStart != checkIsDateSorted, currentSearcDateStart, currentSsearcDateEnd != checkIsDateSorted, currentSsearcDateEnd, currentSortUp, null)
+            select new
+                         {
+                             id = e.EventId,
+                             name = e.Name,
+                             place = e.Place,
+                             dateStart = e.DateStart.ToString(),
+                             dataEnd = e.DateEnd.ToString(),
+                             shortDescription = e.ShortDescription,
+                             description = e.Description,
+                             tag = e.Tags == null ? new List<Tag>() : _eventRepozytory.getEventTag(e)
+                         };
+
+            return Ok(evnets.Skip((currentPageNumber - 1) * currentPageSize).Take(currentPageSize));
+        }
+
         //[Authorize]
         [HttpGet("[action]/{id}")]
         public IActionResult EventDetail(int id)
@@ -46,7 +76,19 @@ namespace PracaDyplomowa.ApiControllers
             {
                 return NotFound();
             }
-            return Ok(e);
+            var details = new
+            {
+                id = e.EventId,
+                name = e.Name,
+                place = e.Place,
+                dateStart = e.DateStart.ToString(),
+                dataEnd = e.DateEnd.ToString(),
+                shortDescription = e.ShortDescription,
+                description = e.Description,
+                tags = _eventRepozytory.getEventTag(e)
+
+            };
+            return Ok(details);
         }
     }
 }

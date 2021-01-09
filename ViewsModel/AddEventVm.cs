@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using PracaDyplomowa.Models;
 
 namespace PracaDyplomowa.ViewsModel
@@ -11,12 +12,12 @@ namespace PracaDyplomowa.ViewsModel
     {
         public int EventId { get; set; }
         [Required(ErrorMessage = "Nazwa jest wymagana")]
-        [StringLength(100, ErrorMessage = "Nazwa za długa")]
+        [StringLength(300, ErrorMessage = "Nazwa za długa")]
         public string Name { get; set; }
-        [StringLength(300, ErrorMessage = "Krutki opis jest za długa")]
+        [StringLength(500, ErrorMessage = "Krutki opis jest za długa")]
         public string ShortDescription { get; set; }
         [Required(ErrorMessage = "Opis jest wymagany")]
-        [StringLength(1000, ErrorMessage = "Opis za długa")]
+        [StringLength(10000, ErrorMessage = "Opis za długa")]
         public string Description { get; set; }
         [Required(ErrorMessage = "Lokalizacja jest wymagana")]
         [StringLength(200, ErrorMessage = "Miejsce jest za długe")]
@@ -31,5 +32,8 @@ namespace PracaDyplomowa.ViewsModel
         public FirmAccount FirmAccount { get; set; }
         public List<Publication> Publications { get; set; }
         public string error { get; set; }
+        public List<Tag> Tags { get; set; }
+        [BindProperty]
+        public List<int> CheckedTags { get; set; }
     }
 }

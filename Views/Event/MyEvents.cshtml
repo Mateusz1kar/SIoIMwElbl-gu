@@ -4,11 +4,17 @@
     <div class="row">
         <div class="col-12 text-center" id="EventName"><h2>@e.Name</h2></div>
     </div>
-    <div class="col-lg-6 col-lg-4">
-
-        <h3>Numer: @e.EventId</h3>
+    <div class="col-12">
         <h3>Krótki opis: @e.ShortDescription</h3>
-        <h3>Opis: @e.Description</h3>
+        @if (e.Tags != null)
+        {
+            @foreach (EventeTag t in e.Tags)
+            {
+                <div class="form-check form-check-inline text-success">
+                    <h4>@t.Tag.Name</h4>
+                </div>
+            }
+        }
         <h3>Miejsce: @e.Place</h3>
         <h3>Data rozpoczęcia: @e.DateStart</h3>
         <h3>Data zakończenia: @e.DateEnd</h3>
