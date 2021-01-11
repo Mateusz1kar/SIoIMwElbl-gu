@@ -21,7 +21,7 @@
         <h3>Miejsce: @Model.eventDetail.Place</h3>
         <h3>Data rozpoczęcia: @Model.eventDetail.DateStart</h3>
         <h3>Data Zakończenia: @Model.eventDetail.DateEnd</h3>
-        <h3>Organizator: @Model.eventDetail.FirmAccount.FirmName</h3><button class="btn btn-primary my-1 mx-0 text-center" onclick="displayOwnerDescription()">Wyświetl informacje  o organizatorze</button>
+        <h3>Organizator: <button class="btn btn-primary my-1 mx-0 text-center" onclick="displayOwnerDescription()">@Model.eventDetail.FirmAccount.FirmName</button></h3>
         <h4 class=" d-none" id="ownerDescription">@Model.eventDetail.FirmAccount.FirmDescriotion</h4>
         <hr />
         <h3>
