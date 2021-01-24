@@ -81,12 +81,13 @@ namespace PracaDyplomowa.Controllers
                 _eventRepozytory.addEvent(e);
                 return RedirectToAction("ShowEvents");
             }
+            model.Tags = _tagRepozytory.getAllTag().ToList();
             return View(model);
 
         }
         public IActionResult ShowEvents(EventsListVM model)
         {
-            model.eventList = _eventRepozytory.searchEvents(null, false, new DateTime(), false, new DateTime(), false, null).ToList();
+            model.eventList = _eventRepozytory.searchEvents(null, false, new DateTime(), false, new DateTime(), false, null, model.searchPlace).ToList();
             model.Tags = _tagRepozytory.getAllTag().ToList();
             return View(model);
         }
@@ -94,7 +95,7 @@ namespace PracaDyplomowa.Controllers
         {
             EventsListVM model = new EventsListVM()
             {
-                eventList = _eventRepozytory.searchEvents(null, false, new DateTime(), false, new DateTime(), false, User.Identity.Name).ToList(),
+                eventList = _eventRepozytory.searchEvents(null, false, new DateTime(), false, new DateTime(), false, User.Identity.Name, null).ToList(),
                 Tags = _tagRepozytory.getAllTag().ToList()
             };
             
@@ -187,7 +188,7 @@ namespace PracaDyplomowa.Controllers
         {
             var checkIsDateSorted = new DateTime();
             model.eventList = new List<Event>();
-            var event_TagNotExluted = _eventRepozytory.searchEvents(model.searchName, model.searcDateStart != checkIsDateSorted, model.searcDateStart, model.searcDateEnd != checkIsDateSorted, model.searcDateEnd, model.typeSort == "Up", model.userEventSearch).ToList();
+            var event_TagNotExluted = _eventRepozytory.searchEvents(model.searchName, model.searcDateStart != checkIsDateSorted, model.searcDateStart, model.searcDateEnd != checkIsDateSorted, model.searcDateEnd, model.typeSort == "Up", model.userEventSearch, model.searchPlace).ToList();
             foreach (var item in event_TagNotExluted)
             {
                 bool isTagExluted = false;

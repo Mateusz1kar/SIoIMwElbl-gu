@@ -25,6 +25,7 @@ namespace PracaDyplomowa.Repozytory
         {
             var buf = _appDbContext.EventeTags.ToList();
             var bufTag = _appDbContext.Tags.ToList();
+            _appDbContext.EventImages.ToList();
             return _appDbContext.Events.ToList();
         }
 
@@ -51,19 +52,23 @@ namespace PracaDyplomowa.Repozytory
             return e;
         }
 
-        public IEnumerable<Event> searchEvents(string name, bool searchByDS, DateTime DateStart, bool searchByDE, DateTime DateEnd, bool typeSort, string userName )
+        public IEnumerable<Event> searchEvents(string name, bool searchByDS, DateTime DateStart, bool searchByDE, DateTime DateEnd, bool typeSort, string userName, string searchPlace)
         {
             var buf = _appDbContext.EventeTags.ToList();
             var bufTag = _appDbContext.Tags.ToList();
             IEnumerable<Event> eventlist;
             if(searchByDS==true & searchByDE==true)
-                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name == null) & (e.UserName == userName || userName == null) & e.DateStart >= DateStart & e.DateStart <= DateEnd).OrderBy(e => e.DateStart).ToList();
+                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name == null) & (e.Place.Contains(searchPlace) || searchPlace == null) & (e.UserName == userName || userName == null) &
+                e.DateStart >= DateStart & e.DateStart <= DateEnd).OrderBy(e => e.DateStart).ToList();
             else if (searchByDS == true & searchByDE == false)
-                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name == null) & (e.UserName == userName || userName == null) & e.DateStart >= DateStart).OrderBy(e => e.DateStart).ToList();
+                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name == null) & (e.Place.Contains(searchPlace) || searchPlace == null) & (e.UserName == userName || userName == null) & 
+                ((e.DateEnd >= DateStart & e.DateStart <= DateStart) || e.DateStart >= DateStart)).OrderBy(e => e.DateStart).ToList();
             else if (searchByDS == false & searchByDE == true)
-                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name == null) & (e.UserName == userName || userName == null) & (e.DateEnd <= DateEnd || e.DateStart <= DateEnd)).OrderBy(e => e.DateStart).ToList();
+                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name == null) & (e.Place.Contains(searchPlace) || searchPlace == null) & (e.UserName == userName || userName == null) & 
+                (e.DateEnd <= DateEnd || e.DateStart <= DateEnd)).OrderBy(e => e.DateStart).ToList();
             else
-                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name == null) & (e.UserName == userName || userName == null)).OrderBy(e => e.DateStart).ToList();
+                eventlist= _appDbContext.Events.Where(e => (e.Name.Contains(name) || name == null) & (e.Place.Contains(searchPlace) || searchPlace == null) & 
+                (e.UserName == userName || userName == null)).OrderBy(e => e.DateStart).ToList();
             if (!typeSort)
             {
                 eventlist=eventlist.Reverse();
@@ -96,6 +101,30 @@ namespace PracaDyplomowa.Repozytory
                 }
             }
             return tags;
+        }
+        public List<string> getEventImage(Event e)
+        {
+
+            List<string> images = new List<string>();
+            if (e.Images != null)
+            {
+                foreach (var item in e.Images)
+                {
+                    images.Add(item.ImageName);
+                }
+            }
+            return images;
+        }
+
+        public IEnumerable<Event> searchDayEvents(DateTime date)
+        {
+
+            var buf = _appDbContext.EventeTags.ToList();
+            var bufTag = _appDbContext.Tags.ToList();
+            IEnumerable<Event> eventlist;
+                eventlist = _appDbContext.Events.Where(e => (e.DateStart <= new DateTime(date.Year, date.Month, date.Day, 23,59,59) & e.DateEnd >=date)).ToList();
+            
+            return eventlist;
         }
     }
 }

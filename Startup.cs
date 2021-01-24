@@ -63,11 +63,17 @@ namespace PracaDyplomowa
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
 
             app.UseAuthorization();
             app.UseAuthentication(); //autoryzacia urzytkownika
+            //Time zone
+            var supportedCultures = new[] { "pl-PL" };
+            var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[0])
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures);
+
+            app.UseRequestLocalization(localizationOptions);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

@@ -81,7 +81,7 @@ namespace PracaDyplomowa.Controllers
                    );
                     if (model.PublikationImageName != "" && model.PublikationImageName != null)
                     {
-                        string imageUrl = Path.Combine("https://sioimwelblągu.azurewebsites.net/Images/EventImages/", model.PublikationImageName);
+                        string imageUrl = Path.Combine("https://sioimelblag.azurewebsites.net/Images/EventImages/", model.PublikationImageName);
                         var result = facebook.PublishToFacebook(model.PublicationText, imageUrl);
                     }
                     else
@@ -169,7 +169,7 @@ namespace PracaDyplomowa.Controllers
                             try
                             {
                                 smtp.UseDefaultCredentials = false;
-                                smtp.Credentials = new System.Net.NetworkCredential("SIoIMwE@gmail.com", "PraceDyplomowa@@!");
+                                smtp.Credentials = new System.Net.NetworkCredential("SIoIMwElblag@gmail.com", "PraceDyplomowa@@!");
                                 smtp.EnableSsl = true;
                                 smtp.Send(mail);
                             }

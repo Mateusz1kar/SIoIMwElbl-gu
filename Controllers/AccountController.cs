@@ -216,8 +216,12 @@ namespace PracaDyplomowa.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
-        public IActionResult AccountPanel()
+        public IActionResult AccountPanel(string error = "")
         {
+            if (error!="")
+            {
+                ModelState.AddModelError("", error);
+            }
             if (_signInManager.IsSignedIn(User))
             {
                 FirmAccount firm = _firmAccountRepozytory.getFirmAccount(User.Identity.Name);
@@ -279,7 +283,7 @@ namespace PracaDyplomowa.Controllers
                         try
                         {
                             smtp.UseDefaultCredentials = false;
-                            smtp.Credentials = new System.Net.NetworkCredential("SIoIMwE@gmail.com", "PraceDyplomowa@@!");
+                            smtp.Credentials = new System.Net.NetworkCredential("SIoIMwElblag@gmail.com", "PraceDyplomowa@@!");
                             smtp.EnableSsl = true;
                             smtp.Send(mail);
                         }

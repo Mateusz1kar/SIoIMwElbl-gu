@@ -33,19 +33,26 @@
                     </div>
                 </div>
                 <div class="form-group row">
-
-                    <label class="col-form-label col-12" asp-for="searcDateStart">Rozpoczęte przed</label>
-                    <div class="col-12">
-                        <input class="form-control " asp-for="searcDateStart" type="date" value="@DateTime.Today" />
+                    <label class="col-form-label col-12" asp-for="searchPlace">Miejsce</label>
+                    <div class=" col-12">
+                        <input class="form-control" asp-for="searchPlace" placeholder="Miejsce" />
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-form-label col-12" asp-for="searcDateEnd">Zakończone do</label>
-                    <div class="col-12">
+
+                    <label class="col-form-label col-12" asp-for="searcDateStart">Trwające </label>
+                    <label class="col-form-label col-1" asp-for="searcDateStart"> od: </label>
+                    <div class="col-5">
+                        <input class="form-control " asp-for="searcDateStart" type="date" value="@DateTime.Today" />
+                    </div>
+                    <label class="col-form-label col-1" asp-for="searcDateEnd"> do: </label>
+                    <div class="col-5">
                         <input class="form-control " asp-for="searcDateEnd" type="date" value="@DateTime.Today" />
 
                     </div>
+
                 </div>
+                
                 <div class="form-group row">
                     <label class="col-form-label col-12" asp-for="typeSort">Typ sortowania</label>
                     <div class="text-center col-12">

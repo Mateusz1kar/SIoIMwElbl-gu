@@ -1,13 +1,67 @@
-﻿@{
+﻿@model PracaDyplomowa.ViewsModel.IndexVM
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="">Witaj w  </h1>
+<div class=" row text-center">
+    <h1 class="text-center m-auto">Witaj w  </h1>
     <h1>Systemie informacyjnym o imprezach masowych w Elblągu (SIoIMwE).</h1>
     <h2>
         Tutaj możesz dowiedzieć się o wszystkich wydarzeniach jakie będą miały miejsce w wspaniałym mieście Elbląg.<br />
         A także  rozpracować swoje własne wydarzania.<br />
         Życzę miłego korzystania z serwisu.<br />
     </h2>
+</div>
+
+<script>
+
+    $('.datepicker').datepicker('update', '2011-03-05');
+</script>
+<div class="col-12 border border-info">
+    <h3>Wydarzenia dnia : @Model.SearchDate.ToShortDateString()</h3>
+    <div class="row   text-center">
+        <form method="post" class="col-12">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group row ">
+                <label class="col-form-label col-md-4 col-6">Znajdź wydarzenia dnia</label>
+                <input type="date" class="form-control col-md-5 col-6" asp-for="SearchDate" id="datepicker">
+                <input type="submit" name="sub" class="col-md-2 btn btn-primary float-right " value="Szukaj" />
+
+            </div>
+
+        </form>
+    </div>
+    @foreach (var e in Model.DataEvents)
+    {
+
+
+    <hr />
+    <div class="row">
+        <div class="col-12 text-center" id="EventName"><h2>@e.Name</h2></div>
+    </div>
+    <div class="col-12">
+        <h3>Krótki opis: @e.ShortDescription</h3>
+        @if (e.Tags != null)
+            {
+        @foreach (EventeTag t in e.Tags)
+                {
+        <div class="form-check form-check-inline text-success">
+            <h4>@t.Tag.Name</h4>
+        </div>
+                }
+            }
+        <h3>Miejsce: @e.Place</h3>
+        <h3>Data rozpoczęcia: @e.DateStart</h3>
+        <h3>Data zakończenia: @e.DateEnd</h3>
+
+        <form asp-action="DetailsEvent" asp-controller="Event" method="post">
+            <div class="form-group d-none">
+                <input asp-for="id" value="@e.EventId" />
+            </div>
+            <input type="submit" class="btn btn-primary" value="Szczegóły" />
+        </form>
+    </div>
+
+
+    }
 </div>

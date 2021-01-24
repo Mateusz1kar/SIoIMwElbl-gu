@@ -23,24 +23,37 @@ namespace PracaDyplomowa.Controllers
         // GET: /<controller>/
         public IActionResult AddToken(AccoutVM model)
         {
+            string error = "";
             if (User.Identity.IsAuthenticated)
             {
-                if (!_tokenRepozytory.TokenExist(model.NewTokenText))
+                if (model.NewTokenText!=null & model.NewPageId!= null & model.NewNamePage!= null)
                 {
-                    var newToken = new Token()
+                    if (!_tokenRepozytory.TokenExist(model.NewTokenText))
                     {
-                        FirmAccount = _firmAccoutRepozytory.getFirmAccount(User.Identity.Name),
-                        PageId = model.NewPageId,
-                        TokenText = model.NewTokenText,
-                        UserName = User.Identity.Name,
-                        NamePage = model.NewNamePage
-                    };
-                    _tokenRepozytory.addToken(newToken);
+                        var newToken = new Token()
+                        {
+                            FirmAccount = _firmAccoutRepozytory.getFirmAccount(User.Identity.Name),
+                            PageId = model.NewPageId,
+                            TokenText = model.NewTokenText,
+                            UserName = User.Identity.Name,
+                            NamePage = model.NewNamePage
+                        };
+                        _tokenRepozytory.addToken(newToken);
+                    }
+                    else
+                    {
+                        error= "Podany Token został już zarejestrowany ";
+                    }
                 }
-               
+                else
+                {
+                    error ="Nie prawidłowe dane przę wypełnić wszystkie pola formularza ";
+                }
+
+
             }
            
-            return RedirectToAction("AccountPanel","Account");
+            return RedirectToAction("AccountPanel","Account", new { error = error});
         }
         public IActionResult DeleteToken(AccoutVM model)
         {

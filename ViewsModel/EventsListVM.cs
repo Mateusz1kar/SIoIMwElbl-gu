@@ -17,6 +17,7 @@ namespace PracaDyplomowa.ViewsModel
         public string sortByDS { get; set; }
         public DateTime searcDateStart { get; set; }
         public string sortByDE { get; set; }
+        public string searchPlace { get; set; }
         public DateTime searcDateEnd { get; set; }
         public string typeSort { get; set; }
         public List<Tag> Tags { get; set; }
